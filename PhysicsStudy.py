@@ -17,6 +17,7 @@ pygame.display.set_caption("Main Menu")
 GAME_OVER = False
 clock = pygame.time.Clock()
 FPS = 60
+kinematicsSliderBar = SliderBar(200, 200, 400, 20, 0, 100, 50)
 
 #game states: menu, kinematics, about me
 gameState = "menu"
@@ -44,14 +45,16 @@ def return_to_menu_button():
 
 def draw_menu():
 	global gameState
+	global GAME_OVER
 	screen.fill(backgroundColor)
 
 	#draw title
 	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10, 70, "PhysicsStudy")
 	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5, 30, "By Rohil Agarwal")
 
-	kinematics = menu_button(SCREEN_HEIGHT / 3, "Kinematics")
-	aboutMe = menu_button(2 * SCREEN_HEIGHT / 3, "About Me")
+	kinematics = menu_button(SCREEN_HEIGHT / 4, "Kinematics")
+	aboutMe = menu_button(2 * SCREEN_HEIGHT / 4, "About Me")
+	exit = menu_button(3 * SCREEN_HEIGHT / 4, "Exit")
 
 	#draw button and check if clicked
 	if kinematics.draw(screen):
@@ -60,13 +63,16 @@ def draw_menu():
 	if aboutMe.draw(screen):
 		gameState = "aboutMe"
 
+	if exit.draw(screen):
+		GAME_OVER = True
+
 
 def draw_kinematics():
+	global kinematicsSliderBar
 	screen.fill(backgroundColor)
 	return_to_menu_button()
 
-	sliderBar = SliderBar(200, 200, 400, 20, 0, 100, 50)
-	sliderBar.draw(screen)
+	kinematicsSliderBar.draw(screen)
 
 
 def draw_about_me():
