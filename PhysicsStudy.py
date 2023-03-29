@@ -2,6 +2,8 @@ import pygame
 import sys
 from ProjectConstants import *
 from Button import *
+from SliderBar import *
+import time
 
 pygame.init()
 
@@ -15,6 +17,8 @@ pygame.display.set_caption("Main Menu")
 GAME_OVER = False
 clock = pygame.time.Clock()
 FPS = 60
+
+#game states: menu, kinematics, about me
 gameState = "menu"
 
 
@@ -25,26 +29,64 @@ def draw_text_center(centerX, centerY, textSize, text):
 	screen.blit(text, text_rect)
 
 
+def menu_button(centerY, text):
+	return Button(centerX=200, centerY=centerY, width=200, height=50, textSize=30, borderSize=10, text=text)
+
+
+def return_to_menu_button():
+	global gameState
+
+	menuButton = Button(centerX=SCREEN_WIDTH - 75, centerY=50, width=100, height=50, textSize=30, borderSize=10, text="Menu")
+
+	if menuButton.draw(screen):
+		gameState = "menu"
+
+
 def draw_menu():
+	global gameState
 	screen.fill(backgroundColor)
 
 	#draw title
 	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10, 70, "PhysicsStudy")
 	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5, 30, "By Rohil Agarwal")
 
-	hello = Button(centerX=200, centerY=200, width=200, height=200, textSize=50, borderSize=10, text="empty")
-	if hello.draw(screen):
-		print("clicked")
+	kinematics = menu_button(SCREEN_HEIGHT / 3, "Kinematics")
+	aboutMe = menu_button(2 * SCREEN_HEIGHT / 3, "About Me")
+
+	#draw button and check if clicked
+	if kinematics.draw(screen):
+		gameState = "kinematics"
+
+	if aboutMe.draw(screen):
+		gameState = "aboutMe"
+
+
+def draw_kinematics():
+	screen.fill(backgroundColor)
+	return_to_menu_button()
+
+	sliderBar = SliderBar(200, 200, 400, 20, 0, 100, 50)
+	sliderBar.draw(screen)
+
+
+def draw_about_me():
+	screen.fill(backgroundColor)
+	return_to_menu_button()
 
 
 #game start
 draw_menu()
-
 pygame.display.update()
 
 while not GAME_OVER:
+	startTime = time.time()
+
 	if gameState == "menu":
 		draw_menu()
+	if gameState == "kinematics":
+		draw_kinematics()
+	if gameState == "aboutMe":
+		draw_about_me()
 
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -52,6 +94,9 @@ while not GAME_OVER:
 
 	pygame.display.update()
 	clock.tick(FPS)
+
+	endTime = time.time()
+	print(round(1 / (endTime - startTime), 3))
 
 pygame.quit()
 sys.exit()
