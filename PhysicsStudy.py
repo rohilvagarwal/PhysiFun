@@ -7,20 +7,14 @@ import time
 
 pygame.init()
 
-#game window
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 700
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Main Menu")
 
 #game variables
 GAME_OVER = False
-clock = pygame.time.Clock()
-FPS = 60
-kinematicsSliderBar = SliderBar(200, 200, 400, 20, 0, 100, 50)
 
 #game states: menu, kinematics, about me
-gameState = "menu"
+gameState = "kinematics"
 
 
 def draw_text_center(centerX, centerY, textSize, text):
@@ -84,6 +78,9 @@ def draw_about_me():
 draw_menu()
 pygame.display.update()
 
+#make sliders
+kinematicsSliderBar = SliderBar(SCREEN_WIDTH - 475, SCREEN_HEIGHT - 75, 400, 20, 0, 100, 50)
+
 while not GAME_OVER:
 	startTime = time.time()
 
@@ -102,7 +99,7 @@ while not GAME_OVER:
 	clock.tick(FPS)
 
 	endTime = time.time()
-	print(round(1 / (endTime - startTime), 3))
+#print(round(1 / (endTime - startTime), 3))
 
 pygame.quit()
 sys.exit()

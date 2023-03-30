@@ -13,14 +13,14 @@ class SliderBar:
 		self.valueRange = maxValue - minValue
 		self.value = defaultValue
 		self.handleWidth = height // 2
-		self.handlePos = self._value_to_pos(defaultValue)
+		self.handlePos = self.value_to_pos(defaultValue)
 		self.handleSelected = False
 
-	def _value_to_pos(self, value):
+	def value_to_pos(self, value):
 		pos_range = self.width - self.handleWidth
 		return int(pos_range * (value - self.minValue) / self.valueRange)
 
-	def _pos_to_value(self, pos):
+	def pos_to_value(self, pos):
 		pos_range = self.width - self.handleWidth
 		return int(pos * self.valueRange / pos_range + self.minValue)
 
@@ -32,10 +32,10 @@ class SliderBar:
 			if self.x <= mousePos[0] <= self.x + self.width and self.y <= mousePos[1] <= self.y + self.height:
 				self.handleSelected = True
 				self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, 0), self.width - self.handleWidth)
-				self.value = self._pos_to_value(self.handlePos)
+				self.value = self.pos_to_value(self.handlePos)
 			elif self.handleSelected:
 				self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, 0), self.width - self.handleWidth)
-				self.value = self._pos_to_value(self.handlePos)
+				self.value = self.pos_to_value(self.handlePos)
 		else:
 			self.handleSelected = False
 
