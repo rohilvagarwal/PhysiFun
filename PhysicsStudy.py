@@ -22,7 +22,8 @@ kinematicsAngleBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, -90, 90, 0, "Ang
 kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
 kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
 kinematicsMass = Kinematics(100, 500, 100, 0)
-launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 50, width=200, height=50, textSize=30, borderSize=10, text="Launch")
+launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 30, width=200, height=50, textSize=30, borderSize=10, text="Launch")
+defaultButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 85, width=200, height=50, textSize=30, borderSize=10, text="Default")
 resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 50, width=200, height=50, textSize=30, borderSize=10, text="Reset")
 
 
@@ -77,10 +78,6 @@ def draw_kinematics():
 	#buttons
 	return_to_menu_button()
 
-	# kinematicsAngleBar.draw(screen)
-	# kinematicsHeightBar.draw(screen)
-	# kinematicsVelocityBar.draw(screen)
-
 	if kinematicsMass.get_ifAnimating():
 		kinematicsAngleBar.draw_static(screen)
 		kinematicsHeightBar.draw_static(screen)
@@ -96,11 +93,21 @@ def draw_kinematics():
 		kinematicsHeightBar.draw_static(screen)
 		kinematicsVelocityBar.draw_static(screen)
 
+		kinematicsMass.after_animation(screen)
+
 		if resetButton.draw(screen):
 			kinematicsMass.set_ifAnimating(False)
 			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
 
 	else:
+		if defaultButton.draw(screen):
+			kinematicsAngleBar.set_value(0)
+			kinematicsHeightBar.set_value(250)
+			kinematicsVelocityBar.set_value(50)
+
+		if launchButton.draw(screen):
+			kinematicsMass.set_ifAnimating(True)
+
 		kinematicsAngleBar.draw(screen)
 		kinematicsHeightBar.draw(screen)
 		kinematicsVelocityBar.draw(screen)
@@ -108,8 +115,6 @@ def draw_kinematics():
 		kinematicsMass.set_angle(kinematicsAngleBar.get_value())
 		kinematicsMass.set_pos(kinematicsMass.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - kinematicsHeightBar.get_value())
 		kinematicsMass.set_initial_velocity(kinematicsVelocityBar.get_value())
-		if launchButton.draw(screen):
-			kinematicsMass.set_ifAnimating(True)
 
 	kinematicsMass.draw_static(screen)
 

@@ -20,6 +20,10 @@ class SliderBar:
 	def get_value(self):
 		return self.value
 
+	def set_value(self, value):
+		self.value = value
+		self.handlePos = self.value_to_pos(self.value)
+
 	def value_to_pos(self, value):
 		pos_range = self.width - self.handleWidth
 		return int(pos_range * (value - self.minValue) / self.valueRange)
