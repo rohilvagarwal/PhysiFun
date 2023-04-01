@@ -10,7 +10,7 @@ def ifClicked():
 	if not ifMouseDownEarlier:
 		if pygame.mouse.get_pressed()[0] == 1:
 			ifMouseDownEarlier = True
-			print("Yes")
+			#print("Yes")
 			return True
 	if ifMouseDownEarlier is True:
 		if pygame.mouse.get_pressed()[0] == 1:
@@ -18,6 +18,19 @@ def ifClicked():
 		elif pygame.mouse.get_pressed()[0] == 0:
 			ifMouseDownEarlier = False
 			return False
+
+
+def rotate_surface(surface, angle, x, y):
+	#rotate surface around pivot point
+	rotated_surface = pygame.transform.rotate(surface, angle)
+
+	#make pivot point center
+	pivotX = x
+	pivotY = y
+	rect = rotated_surface.get_rect()
+	rect.center = pivotX, pivotY
+
+	return rotated_surface, rect
 
 
 #game window
@@ -43,6 +56,3 @@ objectsColor = BLACK
 
 #physical constants
 GRAVITY = 9.8
-
-#miscellaneous
-massRadius = 20

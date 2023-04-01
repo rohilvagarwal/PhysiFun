@@ -3,7 +3,7 @@ import sys
 from ProjectConstants import *
 from Button import *
 from SliderBar import *
-from MassMath import *
+from Kinematics import *
 import time
 
 pygame.init()
@@ -15,15 +15,13 @@ pygame.display.set_caption("Main Menu")
 GAME_OVER = False
 
 #game states: menu, kinematics, about me
-gameState = "kinematics"
+gameState = "menu"
 
-#make sliders
-kinematicsSliderBar = SliderBar(SCREEN_WIDTH - 425, SCREEN_HEIGHT - 150, 400, 20, -90, 90, 0)
-
-#make masses
-kinematicsMass = MassMath(100, 500, 100, 0)
-
-#make buttons
+#kinematics
+kinematicsAngleBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, -90, 90, 0, "Angle (°)")
+kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
+kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
+kinematicsMass = Kinematics(100, 500, 100, 0)
 launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 50, width=200, height=50, textSize=30, borderSize=10, text="Launch")
 resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 50, width=200, height=50, textSize=30, borderSize=10, text="Reset")
 
@@ -74,33 +72,42 @@ def draw_menu():
 
 def draw_kinematics():
 	screen.fill(backgroundColor)
+	pygame.draw.rect(screen, objectsColor, (0, Kinematics.groundHeight, SCREEN_WIDTH, 10))
 
 	#buttons
 	return_to_menu_button()
 
-	kinematicsSliderBar.draw(screen)
-
-	# #if not animating and not done animating
-	# if kinematicsMass.get_ifAnimating() is False and kinematicsMass.get_ifDoneAnimating() is False:
-	# 	#check if launch button is pressed
-	# 	if launchButton.draw(screen):
-	# 		kinematicsMass.set_ifAnimating(True)
-	# else:
-	# 	if resetButton.draw(screen):
-	# 		kinematicsMass.set_ifAnimating(False)
-	# 		kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
+	# kinematicsAngleBar.draw(screen)
+	# kinematicsHeightBar.draw(screen)
+	# kinematicsVelocityBar.draw(screen)
 
 	if kinematicsMass.get_ifAnimating():
+		kinematicsAngleBar.draw_static(screen)
+		kinematicsHeightBar.draw_static(screen)
+		kinematicsVelocityBar.draw_static(screen)
+
 		kinematicsMass.next_launch_frame(5)
 		if resetButton.draw(screen):
 			kinematicsMass.set_ifAnimating(False)
 			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
+
 	elif kinematicsMass.get_ifDoneAnimating():
+		kinematicsAngleBar.draw_static(screen)
+		kinematicsHeightBar.draw_static(screen)
+		kinematicsVelocityBar.draw_static(screen)
+
 		if resetButton.draw(screen):
 			kinematicsMass.set_ifAnimating(False)
 			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
+
 	else:
-		kinematicsMass.set_angle(kinematicsSliderBar.get_value())
+		kinematicsAngleBar.draw(screen)
+		kinematicsHeightBar.draw(screen)
+		kinematicsVelocityBar.draw(screen)
+
+		kinematicsMass.set_angle(kinematicsAngleBar.get_value())
+		kinematicsMass.set_pos(kinematicsMass.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - kinematicsHeightBar.get_value())
+		kinematicsMass.set_initial_velocity(kinematicsVelocityBar.get_value())
 		if launchButton.draw(screen):
 			kinematicsMass.set_ifAnimating(True)
 
@@ -118,8 +125,6 @@ pygame.display.update()
 
 while not GAME_OVER:
 	startTime = time.time()
-
-	ifClicked()
 
 	if gameState == "menu":
 		draw_menu()

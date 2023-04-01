@@ -3,7 +3,7 @@ from ProjectConstants import *
 
 
 class SliderBar:
-	def __init__(self, x, y, width, height, minValue, maxValue, defaultValue):
+	def __init__(self, x, y, width, height, minValue, maxValue, defaultValue, title):
 		self.x = x
 		self.y = y
 		self.width = width
@@ -15,6 +15,7 @@ class SliderBar:
 		self.handleWidth = height // 2
 		self.handlePos = self.value_to_pos(defaultValue)
 		self.handleSelected = False
+		self.title = title
 
 	def get_value(self):
 		return self.value
@@ -30,9 +31,12 @@ class SliderBar:
 	def draw(self, surface):
 		mousePos = pygame.mouse.get_pos()
 
+		#if self.x + self.handlePos - self.handleWidth // 2 <= mousePos[0] <= self.x + self.handlePos + self.handleWidth // 2:
+
 		#if mouse is on handle and is pressed
 		if pygame.mouse.get_pressed()[0] == 1:
-			if self.x <= mousePos[0] <= self.x + self.width and self.y <= mousePos[1] <= self.y + self.height:
+			if self.x + self.handlePos - self.handleWidth // 2 <= mousePos[
+				0] <= self.x + self.handlePos + self.handleWidth + self.handleWidth // 2 and self.y <= mousePos[1] <= self.y + self.height:
 				self.handleSelected = True
 				self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, 0), self.width - self.handleWidth)
 				self.value = self.pos_to_value(self.handlePos)
@@ -42,6 +46,9 @@ class SliderBar:
 		else:
 			self.handleSelected = False
 
+		self.draw_static(surface)
+
+	def draw_static(self, surface):
 		#draw bar
 		bar_rect = pygame.Rect(self.x, self.y + self.height // 2 - 1, self.width, 2)
 		pygame.draw.rect(surface, sliderBarColor, bar_rect)
@@ -51,6 +58,11 @@ class SliderBar:
 		pygame.draw.rect(surface, sliderBarHandleColor, handle_rect)
 
 		#write value
-		font = pygame.font.SysFont("jost700", 40)
-		text = font.render(str(self.value), True, textColor)
-		surface.blit(text, (self.x, self.y))
+		valueFont = pygame.font.SysFont("jost700", 20)
+		valueText = valueFont.render(str(self.value), True, textColor)
+		surface.blit(valueText, (self.x, self.y + 15))
+
+		#write title
+		titleFont = pygame.font.SysFont("jost700", 25)
+		titleText = titleFont.render(self.title, True, textColor)
+		surface.blit(titleText, (self.x, self.y - 35))

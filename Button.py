@@ -29,7 +29,7 @@ class Button:
 			pygame.draw.rect(surface, textColor, self.buttonBackground, width=self.borderSize)
 			pygame.draw.rect(surface, hoverColor, self.buttonBackground.inflate(-self.borderSize, -self.borderSize))
 
-			if pygame.mouse.get_pressed()[0] == 1:
+			if ifClicked():
 				pressed = True
 
 		#if mouse is not on button
