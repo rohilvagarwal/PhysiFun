@@ -1,5 +1,25 @@
 import pygame
 
+#clicking mechanism
+ifMouseDownEarlier = False
+
+
+def ifClicked():
+	global ifMouseDownEarlier
+
+	if not ifMouseDownEarlier:
+		if pygame.mouse.get_pressed()[0] == 1:
+			ifMouseDownEarlier = True
+			print("Yes")
+			return True
+	if ifMouseDownEarlier is True:
+		if pygame.mouse.get_pressed()[0] == 1:
+			return False
+		elif pygame.mouse.get_pressed()[0] == 0:
+			ifMouseDownEarlier = False
+			return False
+
+
 #game window
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 700
@@ -22,7 +42,7 @@ sliderBarHandleColor = RED
 objectsColor = BLACK
 
 #physical constants
-gravity = 9.8
+GRAVITY = 9.8
 
 #miscellaneous
 massRadius = 20

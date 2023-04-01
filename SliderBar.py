@@ -16,6 +16,9 @@ class SliderBar:
 		self.handlePos = self.value_to_pos(defaultValue)
 		self.handleSelected = False
 
+	def get_value(self):
+		return self.value
+
 	def value_to_pos(self, value):
 		pos_range = self.width - self.handleWidth
 		return int(pos_range * (value - self.minValue) / self.valueRange)
@@ -39,14 +42,15 @@ class SliderBar:
 		else:
 			self.handleSelected = False
 
-		# Draw the bar
+		#draw bar
 		bar_rect = pygame.Rect(self.x, self.y + self.height // 2 - 1, self.width, 2)
 		pygame.draw.rect(surface, sliderBarColor, bar_rect)
 
-		# Draw the handle
+		#draw handle
 		handle_rect = pygame.Rect(self.x + self.handlePos, self.y, self.handleWidth, self.height)
 		pygame.draw.rect(surface, sliderBarHandleColor, handle_rect)
 
+		#write value
 		font = pygame.font.SysFont("jost700", 40)
 		text = font.render(str(self.value), True, textColor)
 		surface.blit(text, (self.x, self.y))

@@ -4,6 +4,8 @@ from ProjectConstants import *
 
 class Button:
 	def __init__(self, centerX, centerY, width, height, textSize, borderSize, text="empty"):
+		self.ifMouseDownEarlier = False
+
 		#font
 		self.menuFont = pygame.font.SysFont("jost700", textSize)
 

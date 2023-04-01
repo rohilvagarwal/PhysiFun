@@ -3,6 +3,7 @@ import sys
 from ProjectConstants import *
 from Button import *
 from SliderBar import *
+from MassMath import *
 import time
 
 pygame.init()
@@ -15,6 +16,16 @@ GAME_OVER = False
 
 #game states: menu, kinematics, about me
 gameState = "kinematics"
+
+#make sliders
+kinematicsSliderBar = SliderBar(SCREEN_WIDTH - 425, SCREEN_HEIGHT - 150, 400, 20, -90, 90, 0)
+
+#make masses
+kinematicsMass = MassMath(100, 500, 100, 0)
+
+#make buttons
+launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 50, width=200, height=50, textSize=30, borderSize=10, text="Launch")
+resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 50, width=200, height=50, textSize=30, borderSize=10, text="Reset")
 
 
 def draw_text_center(centerX, centerY, textSize, text):
@@ -62,11 +73,38 @@ def draw_menu():
 
 
 def draw_kinematics():
-	global kinematicsSliderBar
 	screen.fill(backgroundColor)
+
+	#buttons
 	return_to_menu_button()
 
 	kinematicsSliderBar.draw(screen)
+
+	# #if not animating and not done animating
+	# if kinematicsMass.get_ifAnimating() is False and kinematicsMass.get_ifDoneAnimating() is False:
+	# 	#check if launch button is pressed
+	# 	if launchButton.draw(screen):
+	# 		kinematicsMass.set_ifAnimating(True)
+	# else:
+	# 	if resetButton.draw(screen):
+	# 		kinematicsMass.set_ifAnimating(False)
+	# 		kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
+
+	if kinematicsMass.get_ifAnimating():
+		kinematicsMass.next_launch_frame(5)
+		if resetButton.draw(screen):
+			kinematicsMass.set_ifAnimating(False)
+			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
+	elif kinematicsMass.get_ifDoneAnimating():
+		if resetButton.draw(screen):
+			kinematicsMass.set_ifAnimating(False)
+			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
+	else:
+		kinematicsMass.set_angle(kinematicsSliderBar.get_value())
+		if launchButton.draw(screen):
+			kinematicsMass.set_ifAnimating(True)
+
+	kinematicsMass.draw_static(screen)
 
 
 def draw_about_me():
@@ -78,11 +116,10 @@ def draw_about_me():
 draw_menu()
 pygame.display.update()
 
-#make sliders
-kinematicsSliderBar = SliderBar(SCREEN_WIDTH - 475, SCREEN_HEIGHT - 75, 400, 20, 0, 100, 50)
-
 while not GAME_OVER:
 	startTime = time.time()
+
+	ifClicked()
 
 	if gameState == "menu":
 		draw_menu()
