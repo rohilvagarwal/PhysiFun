@@ -11,6 +11,14 @@ pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Main Menu")
 
+#image imports
+d4 = pygame.image.load('images/d4Logo.svg')
+scaled_d4 = pygame.transform.scale(d4, (100, 100))
+
+rojWidth = 300
+roj = pygame.image.load('images/roj.png')
+scaledRoj = pygame.transform.scale(roj, (rojWidth, rojWidth))
+
 #game variables
 GAME_OVER = False
 
@@ -47,10 +55,15 @@ def return_to_menu_button():
 		gameState = "menu"
 
 
+def draw_d4():
+	screen.blit(scaled_d4, (10, 10))
+
+
 def draw_menu():
 	global gameState
 	global GAME_OVER
 	screen.fill(backgroundColor)
+	draw_d4()
 
 	#draw title
 	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10, 70, "PhysicsStudy")
@@ -73,6 +86,7 @@ def draw_menu():
 
 def draw_kinematics():
 	screen.fill(backgroundColor)
+	draw_d4()
 	pygame.draw.rect(screen, objectsColor, (0, Kinematics.groundHeight, SCREEN_WIDTH, 10))
 
 	#buttons
@@ -121,7 +135,13 @@ def draw_kinematics():
 
 def draw_about_me():
 	screen.fill(backgroundColor)
+	draw_d4()
 	return_to_menu_button()
+
+	screen.blit(scaledRoj, (SCREEN_WIDTH / 2 - rojWidth / 2, 50))
+	draw_text_center(SCREEN_WIDTH / 2, rojWidth + 70, 20, "By Rohil Agarwal")
+	draw_text_center(SCREEN_WIDTH / 2, rojWidth + 100, 20, "I go by roj.")
+	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, 20, "Github: https://github.com/rohilvagarwal")
 
 
 #game start
