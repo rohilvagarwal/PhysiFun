@@ -19,6 +19,7 @@ class Kinematics:
 		self.currentCenterX = centerX
 		self.currentCenterY = centerY
 		self.ifAnimating = False
+		self.ifPaused = False
 		self.ifDoneAnimating = False
 		self.arrowWidth = 0
 		self.framesPast = 0
@@ -29,6 +30,12 @@ class Kinematics:
 
 	def get_ifAnimating(self):
 		return self.ifAnimating
+
+	def set_ifPaused(self, ifPaused):
+		self.ifPaused = ifPaused
+
+	def get_ifPaused(self):
+		return self.ifPaused
 
 	def get_ifDoneAnimating(self):
 		return self.ifDoneAnimating
@@ -109,9 +116,18 @@ class Kinematics:
 
 		if not self.ifDoneAnimating:
 			valueFont = pygame.font.SysFont("jost700", 20)
-			timeText = valueFont.render("Time: " + str(round((self.framesPast * 1 / FPS) * self.playBackSpeed, 3)) + " s", True, textColor)
+			timeText = valueFont.render("Time: " + str("{:.3f}".format(round((self.framesPast * 1 / FPS) * self.playBackSpeed, 3))) + " s", True,
+										textColor)
+
+			ifOver = ""
+
+			if self.calculate_total_horizontal_distance() > SCREEN_WIDTH - self.originalCenterX:
+				ifOver = valueFont.render("The Ball will go Over!", True, textColor)
 
 			surface.blit(timeText, (SCREEN_WIDTH - 220, 300))
+
+			if ifOver:
+				surface.blit(ifOver, (SCREEN_WIDTH - 220, 330))
 
 	def next_launch_frame(self, playBackSpeed):
 		self.playBackSpeed = playBackSpeed
@@ -130,7 +146,7 @@ class Kinematics:
 	def after_animation(self, surface):
 		if self.ifDoneAnimating:
 			valueFont = pygame.font.SysFont("jost700", 20)
-			timeText = valueFont.render("Time: " + str(round(self.calculate_time(), 3)) + " s", True, textColor)
+			timeText = valueFont.render("Time: " + str("{:.3f}".format(round(self.calculate_time(), 3))) + " s", True, textColor)
 			surface.blit(timeText, (SCREEN_WIDTH - 220, 300))
 
 			heightText = valueFont.render("Max Height: " + str(round(self.calculate_vertical_position(self.calculate_time_max_height()), 2)) + " m",
@@ -138,7 +154,7 @@ class Kinematics:
 			surface.blit(heightText, (SCREEN_WIDTH - 220, 330))
 
 			if self.arrowWidth < self.calculate_total_horizontal_distance() - Kinematics.massRadius - 20:
-				self.arrowWidth += 500 / FPS
+				self.arrowWidth += 800 / FPS
 			else:
 				self.arrowWidth = self.calculate_total_horizontal_distance() - Kinematics.massRadius - 20
 				pygame.draw.polygon(surface, objectsColor, ((self.currentCenterX - Kinematics.massRadius - 20, self.currentCenterY - 10),

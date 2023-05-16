@@ -22,7 +22,7 @@ scaledRoj = pygame.transform.scale(roj, (rojWidth, rojWidth))
 #game variables
 GAME_OVER = False
 
-#game states: menu, kinematics, about me
+#game states: menu, kinematics, circularMotion, aboutMe
 gameState = "menu"
 
 #kinematics
@@ -30,9 +30,10 @@ kinematicsAngleBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, -90, 90, 0, "Ang
 kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
 kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
 kinematicsMass = Kinematics(100, 500, 100, 0)
-launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 30, width=200, height=50, textSize=30, borderSize=10, text="Launch")
-defaultButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 85, width=200, height=50, textSize=30, borderSize=10, text="Default")
-resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 50, width=200, height=50, textSize=30, borderSize=10, text="Reset")
+launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Launch")
+defaultButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10, text="Default")
+pauseButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Pause")
+resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10, text="Reset")
 
 
 def draw_text_center(centerX, centerY, textSize, text):
@@ -43,7 +44,7 @@ def draw_text_center(centerX, centerY, textSize, text):
 
 
 def menu_button(centerY, text):
-	return Button(centerX=200, centerY=centerY, width=200, height=50, textSize=30, borderSize=10, text=text)
+	return Button(centerX=200, centerY=centerY, width=230, height=50, textSize=30, borderSize=10, text=text)
 
 
 def return_to_menu_button():
@@ -69,13 +70,17 @@ def draw_menu():
 	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10, 70, "PhysicsStudy")
 	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5, 30, "By Rohil Agarwal")
 
-	kinematics = menu_button(SCREEN_HEIGHT / 4, "Kinematics")
-	aboutMe = menu_button(2 * SCREEN_HEIGHT / 4, "About Me")
-	exit = menu_button(3 * SCREEN_HEIGHT / 4, "Exit")
+	kinematics = menu_button(2 * SCREEN_HEIGHT / 6, "Kinematics")
+	circularMotion = menu_button(3 * SCREEN_HEIGHT / 6, "Circular Motion")
+	aboutMe = menu_button(4 * SCREEN_HEIGHT / 6, "About Me")
+	exit = menu_button(5 * SCREEN_HEIGHT / 6, "Exit")
 
 	#draw button and check if clicked
 	if kinematics.draw(screen):
 		gameState = "kinematics"
+
+	if circularMotion.draw(screen):
+		gameState = "circularMotion"
 
 	if aboutMe.draw(screen):
 		gameState = "aboutMe"
@@ -97,10 +102,18 @@ def draw_kinematics():
 		kinematicsHeightBar.draw_static(screen)
 		kinematicsVelocityBar.draw_static(screen)
 
-		kinematicsMass.next_launch_frame(5)
+		if pauseButton.draw(screen):
+			kinematicsMass.set_ifPaused(not kinematicsMass.get_ifPaused())
+
 		if resetButton.draw(screen):
+			kinematicsMass.set_ifPaused(False)
 			kinematicsMass.set_ifAnimating(False)
 			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
+
+		if not kinematicsMass.ifPaused:
+			kinematicsMass.next_launch_frame(5)
+
+
 
 	elif kinematicsMass.get_ifDoneAnimating():
 		kinematicsAngleBar.draw_static(screen)
@@ -133,6 +146,12 @@ def draw_kinematics():
 	kinematicsMass.draw_static(screen)
 
 
+def draw_circular_motion():
+	screen.fill(backgroundColor)
+	draw_d4()
+	return_to_menu_button()
+
+
 def draw_about_me():
 	screen.fill(backgroundColor)
 	draw_d4()
@@ -155,6 +174,8 @@ while not GAME_OVER:
 		draw_menu()
 	if gameState == "kinematics":
 		draw_kinematics()
+	if gameState == "circularMotion":
+		draw_circular_motion()
 	if gameState == "aboutMe":
 		draw_about_me()
 
