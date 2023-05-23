@@ -52,7 +52,7 @@ def return_to_menu_button():
 
 	menuButton = Button(centerX=SCREEN_WIDTH - 75, centerY=50, width=100, height=50, textSize=30, borderSize=10, text="Menu")
 
-	if menuButton.draw(screen):
+	if menuButton.draw_and_check_click(screen):
 		gameState = "menu"
 
 
@@ -76,16 +76,16 @@ def draw_menu():
 	exit = menu_button(5 * SCREEN_HEIGHT / 6, "Exit")
 
 	#draw button and check if clicked
-	if kinematics.draw(screen):
+	if kinematics.draw_and_check_click(screen):
 		gameState = "kinematics"
 
-	if circularMotion.draw(screen):
+	if circularMotion.draw_and_check_click(screen):
 		gameState = "circularMotion"
 
-	if aboutMe.draw(screen):
+	if aboutMe.draw_and_check_click(screen):
 		gameState = "aboutMe"
 
-	if exit.draw(screen):
+	if exit.draw_and_check_click(screen):
 		GAME_OVER = True
 
 
@@ -97,43 +97,48 @@ def draw_kinematics():
 	#buttons
 	return_to_menu_button()
 
-	if kinematicsMass.get_ifAnimating():
+	if kinematicsMass.get_state() == "animating":
 		kinematicsAngleBar.draw_static(screen)
 		kinematicsHeightBar.draw_static(screen)
 		kinematicsVelocityBar.draw_static(screen)
 
-		if pauseButton.draw(screen):
-			kinematicsMass.set_ifPaused(not kinematicsMass.get_ifPaused())
+		if pauseButton.draw_and_check_click(screen):
+			kinematicsMass.set_state("paused")
 
-		if resetButton.draw(screen):
-			kinematicsMass.set_ifPaused(False)
-			kinematicsMass.set_ifAnimating(False)
+		if resetButton.draw_and_check_click(screen):
+			kinematicsMass.set_state("default")
 			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
 
-		if not kinematicsMass.ifPaused:
-			kinematicsMass.next_launch_frame(5)
+		kinematicsMass.next_launch_frame(5)
 
+	elif kinematicsMass.get_state() == "paused":
+		kinematicsAngleBar.draw_static(screen)
+		kinematicsHeightBar.draw_static(screen)
+		kinematicsVelocityBar.draw_static(screen)
 
+		if pauseButton.draw_and_check_click(screen):
+			kinematicsMass.set_state("animating")
 
-	elif kinematicsMass.get_ifDoneAnimating():
+		if resetButton.draw_and_check_click(screen):
+			kinematicsMass.set_state("default")
+			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
+
+	elif kinematicsMass.get_state() == "doneAnimating":
 		kinematicsAngleBar.draw_static(screen)
 		kinematicsHeightBar.draw_static(screen)
 		kinematicsVelocityBar.draw_static(screen)
 
 		kinematicsMass.after_animation(screen)
 
-		if resetButton.draw(screen):
-			kinematicsMass.set_ifAnimating(False)
+		if resetButton.draw_and_check_click(screen):
+			kinematicsMass.set_state("default")
 			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
 
-	else:
-		if defaultButton.draw(screen):
+	elif kinematicsMass.get_state() == "default":
+		if defaultButton.draw_and_check_click(screen):
 			kinematicsAngleBar.set_value(0)
 			kinematicsHeightBar.set_value(250)
 			kinematicsVelocityBar.set_value(50)
-
-		if launchButton.draw(screen):
-			kinematicsMass.set_ifAnimating(True)
 
 		kinematicsAngleBar.draw(screen)
 		kinematicsHeightBar.draw(screen)
@@ -142,6 +147,9 @@ def draw_kinematics():
 		kinematicsMass.set_angle(kinematicsAngleBar.get_value())
 		kinematicsMass.set_pos(kinematicsMass.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - kinematicsHeightBar.get_value())
 		kinematicsMass.set_initial_velocity(kinematicsVelocityBar.get_value())
+
+		if launchButton.draw_and_check_click(screen):
+			kinematicsMass.set_state("animating")
 
 	kinematicsMass.draw_static(screen)
 

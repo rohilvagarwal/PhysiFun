@@ -20,7 +20,7 @@ class Button:
 		self.buttonBackground.center = (centerX, centerY)
 		self.borderSize = borderSize
 
-	def draw(self, surface):
+	def draw_and_check_click(self, surface):
 		pressed = False
 		mousePos = pygame.mouse.get_pos()
 

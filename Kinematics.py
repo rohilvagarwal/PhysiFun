@@ -9,6 +9,7 @@ class Kinematics:
 	massRadius = 20
 
 	def __init__(self, centerX, centerY, initialVelocity, angle):
+		self.state = "default"  #default, animating, paused, doneAnimating
 		self.originalCenterX = centerX
 		self.originalCenterY = centerY
 		self.angle = angle
@@ -18,34 +19,22 @@ class Kinematics:
 		self.currentYVelocity = self.initialYVelocity
 		self.currentCenterX = centerX
 		self.currentCenterY = centerY
-		self.ifAnimating = False
-		self.ifPaused = False
-		self.ifDoneAnimating = False
 		self.arrowWidth = 0
 		self.framesPast = 0
 		self.playBackSpeed = 1
 
-	def set_ifAnimating(self, ifAnimating):
-		self.ifAnimating = ifAnimating
+	def set_state(self, state):
+		self.state = state
 
-	def get_ifAnimating(self):
-		return self.ifAnimating
-
-	def set_ifPaused(self, ifPaused):
-		self.ifPaused = ifPaused
-
-	def get_ifPaused(self):
-		return self.ifPaused
-
-	def get_ifDoneAnimating(self):
-		return self.ifDoneAnimating
+	def get_state(self):
+		return self.state
 
 	def set_pos(self, centerX, centerY):
 		self.originalCenterX = centerX
 		self.originalCenterY = centerY
 		self.currentCenterX = self.originalCenterX
 		self.currentCenterY = self.originalCenterY
-		self.ifDoneAnimating = False
+		self.state = "default"
 		self.arrowWidth = 0
 		self.framesPast = 0
 		self.playBackSpeed = 1
@@ -99,7 +88,7 @@ class Kinematics:
 	def draw_static(self, surface):
 		pygame.draw.circle(surface, objectsColor, (self.currentCenterX, self.currentCenterY), Kinematics.massRadius)
 
-		if not self.ifAnimating and not self.ifDoneAnimating:
+		if self.state == "default":
 			arrowLayer = pygame.Surface((200, 200)).convert_alpha()
 			arrowLayer.fill((0, 0, 0, 0))
 
@@ -114,7 +103,7 @@ class Kinematics:
 
 			surface.blit(rotatedSurface, center)
 
-		if not self.ifDoneAnimating:
+		if not self.state == "doneAnimating":
 			valueFont = pygame.font.SysFont("jost700", 20)
 			timeText = valueFont.render("Time: " + str("{:.3f}".format(round((self.framesPast * 1 / FPS) * self.playBackSpeed, 3))) + " s", True,
 										textColor)
@@ -137,14 +126,13 @@ class Kinematics:
 		self.currentCenterY += self.currentYVelocity * playBackSpeed / FPS
 
 		if self.currentCenterY >= self.calculate_total_vertical_distance():
-			self.ifAnimating = False
-			self.ifDoneAnimating = True
+			self.set_state("doneAnimating")
 
 			self.currentCenterX = self.calculate_total_horizontal_distance() + self.originalCenterX
 			self.currentCenterY = self.calculate_total_vertical_distance()
 
 	def after_animation(self, surface):
-		if self.ifDoneAnimating:
+		if self.state == "doneAnimating":
 			valueFont = pygame.font.SysFont("jost700", 20)
 			timeText = valueFont.render("Time: " + str("{:.3f}".format(round(self.calculate_time(), 3))) + " s", True, textColor)
 			surface.blit(timeText, (SCREEN_WIDTH - 220, 300))
