@@ -175,8 +175,12 @@ def draw_about_me():
 draw_menu()
 pygame.display.update()
 
+frame_count = 0
+frame_rate = 0
+start_time = time.time()
+
 while not GAME_OVER:
-	startTime = time.time()
+	#startTime = time.time()
 
 	if gameState == "menu":
 		draw_menu()
@@ -191,10 +195,18 @@ while not GAME_OVER:
 		if event.type == pygame.QUIT:
 			GAME_OVER = True
 
+	frame_count += 1
+	if time.time() - start_time > 1:
+		frame_rate = frame_count
+		frame_count = 0
+		start_time = time.time()
+
+	draw_text_center(20, 10, 10, "FPS: " + str(frame_rate))
+
 	pygame.display.update()
 	clock.tick(FPS)
 
-	endTime = time.time()
+#endTime = time.time()
 #print(round(1 / (endTime - startTime), 3))
 
 pygame.quit()
