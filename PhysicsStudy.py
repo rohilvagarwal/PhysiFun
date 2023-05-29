@@ -1,9 +1,8 @@
-import pygame
-import sys
 from ProjectConstants import *
-from Button import *
-from SliderBar import *
-from Kinematics import *
+import sys
+from Button import Button
+from SliderBar import SliderBar
+from Kinematics import Kinematics
 import time
 
 pygame.init()
@@ -34,13 +33,9 @@ launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, wi
 defaultButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10, text="Default")
 pauseButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Pause")
 resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10, text="Reset")
-
-
-def draw_text_center(centerX, centerY, textSize, text):
-	font = pygame.font.SysFont("jost700", textSize)
-	text = font.render(text, True, textColor)
-	text_rect = text.get_rect(center=(centerX, centerY))
-	screen.blit(text, text_rect)
+oneXSpeed = Button(centerX=300, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="1x")
+threeXSpeed = Button(centerX=350, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="3x")
+fiveXSpeed = Button(centerX=400, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="5x")
 
 
 def menu_button(centerY, text):
@@ -67,8 +62,8 @@ def draw_menu():
 	draw_d4()
 
 	#draw title
-	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10, 70, "PhysicsStudy")
-	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5, 30, "By Rohil Agarwal")
+	draw_text_center(screen, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10, 70, "PhysicsStudy")
+	draw_text_center(screen, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5, 30, "By Rohil Agarwal")
 
 	kinematics = menu_button(2 * SCREEN_HEIGHT / 6, "Kinematics")
 	circularMotion = menu_button(3 * SCREEN_HEIGHT / 6, "Circular Motion")
@@ -92,10 +87,17 @@ def draw_menu():
 def draw_kinematics():
 	screen.fill(backgroundColor)
 	draw_d4()
-	pygame.draw.rect(screen, objectsColor, (0, Kinematics.groundHeight, SCREEN_WIDTH, 10))
 
 	#buttons
 	return_to_menu_button()
+
+	draw_text_center(screen, 100, SCREEN_HEIGHT - 110, 20, "Playback Speed:")
+	if oneXSpeed.draw_and_check_click(screen):
+		kinematicsMass.set_playbackSpeed(1)
+	if threeXSpeed.draw_and_check_click(screen):
+		kinematicsMass.set_playbackSpeed(3)
+	if fiveXSpeed.draw_and_check_click(screen):
+		kinematicsMass.set_playbackSpeed(5)
 
 	if kinematicsMass.get_state() == "animating":
 		kinematicsAngleBar.draw_static(screen)
@@ -109,7 +111,8 @@ def draw_kinematics():
 			kinematicsMass.set_state("default")
 			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
 
-		kinematicsMass.next_launch_frame(5)
+		#kinematicsMass.set_playbackSpeed(5)
+		kinematicsMass.next_launch_frame()
 
 	elif kinematicsMass.get_state() == "paused":
 		kinematicsAngleBar.draw_static(screen)
@@ -128,7 +131,7 @@ def draw_kinematics():
 		kinematicsHeightBar.draw_static(screen)
 		kinematicsVelocityBar.draw_static(screen)
 
-		kinematicsMass.after_animation(screen)
+		#kinematicsMass.after_animation(screen)
 
 		if resetButton.draw_and_check_click(screen):
 			kinematicsMass.set_state("default")
@@ -166,9 +169,9 @@ def draw_about_me():
 	return_to_menu_button()
 
 	screen.blit(scaledRoj, (SCREEN_WIDTH / 2 - rojWidth / 2, 50))
-	draw_text_center(SCREEN_WIDTH / 2, rojWidth + 70, 20, "By Rohil Agarwal")
-	draw_text_center(SCREEN_WIDTH / 2, rojWidth + 100, 20, "I go by roj.")
-	draw_text_center(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, 20, "Github: https://github.com/rohilvagarwal")
+	draw_text_center(screen, SCREEN_WIDTH / 2, rojWidth + 70, 20, "By Rohil Agarwal")
+	draw_text_center(screen, SCREEN_WIDTH / 2, rojWidth + 100, 20, "I go by roj.")
+	draw_text_center(screen, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, 20, "Github: https://github.com/rohilvagarwal")
 
 
 #game start
@@ -201,7 +204,7 @@ while not GAME_OVER:
 		frame_count = 0
 		start_time = time.time()
 
-	draw_text_center(20, 10, 10, "FPS: " + str(frame_rate))
+	draw_text_left(screen, 5, 10, 10, "FPS: " + str(frame_rate))
 
 	pygame.display.update()
 	clock.tick(FPS)

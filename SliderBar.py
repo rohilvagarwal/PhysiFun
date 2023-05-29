@@ -1,4 +1,3 @@
-import pygame
 from ProjectConstants import *
 
 
@@ -62,11 +61,7 @@ class SliderBar:
 		pygame.draw.rect(surface, sliderBarHandleColor, handle_rect)
 
 		#write value
-		valueFont = pygame.font.SysFont("jost700", 20)
-		valueText = valueFont.render(str(self.value), True, textColor)
-		surface.blit(valueText, (self.x, self.y + 15))
+		draw_text_top_left(surface, self.x, self.y + 15, 20, str(self.value))
 
 		#write title
-		titleFont = pygame.font.SysFont("jost700", 25)
-		titleText = titleFont.render(self.title, True, textColor)
-		surface.blit(titleText, (self.x, self.y - 35))
+		draw_text_top_left(surface, self.x, self.y - 35, 25, self.title)

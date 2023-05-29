@@ -1,5 +1,3 @@
-import pygame.draw
-
 from ProjectConstants import *
 import math
 
@@ -20,8 +18,8 @@ class Kinematics:
 		self.currentCenterX = centerX
 		self.currentCenterY = centerY
 		self.arrowWidth = 0
-		self.framesPast = 0
 		self.playBackSpeed = 1
+		self.currentTime = 0.000
 
 	def set_state(self, state):
 		self.state = state
@@ -36,8 +34,16 @@ class Kinematics:
 		self.currentCenterY = self.originalCenterY
 		self.state = "default"
 		self.arrowWidth = 0
-		self.framesPast = 0
-		self.playBackSpeed = 1
+		#self.framesPast = 0
+		self.currentTime = 0.000
+
+	#self.playBackSpeed = 1
+
+	def set_playbackSpeed(self, playbackSpeed):
+		self.playBackSpeed = playbackSpeed
+
+	def get_playbackSpeed(self):
+		return self.playBackSpeed
 
 	def recalculate_velocities(self):
 		self.initialXVelocity = math.cos(math.radians(self.angle)) * self.initialVelocity
@@ -52,7 +58,7 @@ class Kinematics:
 		self.initialVelocity = initialVelocity
 		self.recalculate_velocities()
 
-	def calculate_time(self):
+	def calculate_time_till_ground(self):
 		#for equation y = y0 + vt + 1/2 * at^2 => 1/2 * at^2 + vt + height - ground_height + radius = 0
 		a = GRAVITY / 2
 		b = self.initialYVelocity
@@ -68,6 +74,9 @@ class Kinematics:
 			root = (-b + math.sqrt(discriminant)) / (2 * a)
 			return root
 
+	def calculate_current_time_per_frame(self):
+		self.currentTime += 1 / FPS * self.playBackSpeed
+
 	def calculate_time_max_height(self):
 		max_height_time = -self.initialYVelocity / GRAVITY
 		if max_height_time <= 0:
@@ -80,13 +89,29 @@ class Kinematics:
 			time, 2)
 
 	def calculate_total_horizontal_distance(self):
-		return self.initialXVelocity * self.calculate_time()
+		return self.initialXVelocity * self.calculate_time_till_ground()
 
 	def calculate_total_vertical_distance(self):
-		return self.originalCenterY + self.initialYVelocity * self.calculate_time() + 1 / 2 * GRAVITY * math.pow(self.calculate_time(), 2)
+		return self.originalCenterY + self.initialYVelocity * self.calculate_time_till_ground() + 1 / 2 * GRAVITY * math.pow(
+			self.calculate_time_till_ground(), 2)
 
-	def draw_static(self, surface):
-		pygame.draw.circle(surface, objectsColor, (self.currentCenterX, self.currentCenterY), Kinematics.massRadius)
+	def next_launch_frame(self):
+		#self.framesPast += 1
+		self.calculate_current_time_per_frame()
+		self.currentCenterX += self.initialXVelocity * self.playBackSpeed / FPS
+		self.currentYVelocity += GRAVITY * self.playBackSpeed / FPS
+		self.currentCenterY += self.currentYVelocity * self.playBackSpeed / FPS
+
+		if self.currentCenterY >= self.calculate_total_vertical_distance():
+			self.set_state("doneAnimating")
+
+			self.currentCenterX = self.calculate_total_horizontal_distance() + self.originalCenterX
+			self.currentCenterY = self.calculate_total_vertical_distance()
+
+	def draw_static(self, screen):
+		pygame.draw.circle(screen, objectsColor, (self.currentCenterX, self.currentCenterY), Kinematics.massRadius)
+		#ground
+		pygame.draw.rect(screen, objectsColor, (0, Kinematics.groundHeight, SCREEN_WIDTH, 10))
 
 		if self.state == "default":
 			arrowLayer = pygame.Surface((200, 200)).convert_alpha()
@@ -101,57 +126,43 @@ class Kinematics:
 
 			rotatedSurface, center = rotate_surface(arrowLayer, self.angle, self.currentCenterX, self.currentCenterY)
 
-			surface.blit(rotatedSurface, center)
+			screen.blit(rotatedSurface, center)
+
+		if self.calculate_total_horizontal_distance() > SCREEN_WIDTH - self.originalCenterX:
+			draw_text_right(screen, SCREEN_WIDTH - 10, 400, 10, "The ball will")
+			draw_text_right(screen, SCREEN_WIDTH - 10, 412, 10, "exceed the edge!")
 
 		if not self.state == "doneAnimating":
-			valueFont = pygame.font.SysFont("jost700", 20)
-			timeText = valueFont.render("Time: " + str("{:.3f}".format(round((self.framesPast * 1 / FPS) * self.playBackSpeed, 3))) + " s", True,
-										textColor)
+			draw_text_right(screen, SCREEN_WIDTH - 130, 100, 20, "Time:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 100, 20, str("{:.3f}".format(self.currentTime)) + " s")
 
-			ifOver = ""
+			draw_text_right(screen, SCREEN_WIDTH - 130, 130, 20, "Speed:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 130, 20, str(self.playBackSpeed) + "x")
 
-			if self.calculate_total_horizontal_distance() > SCREEN_WIDTH - self.originalCenterX:
-				ifOver = valueFont.render("The Ball will go Over!", True, textColor)
+			draw_text_right(screen, SCREEN_WIDTH - 130, 160, 20, "Max Height:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 160, 20, "?")
 
-			surface.blit(timeText, (SCREEN_WIDTH - 220, 300))
-
-			if ifOver:
-				surface.blit(ifOver, (SCREEN_WIDTH - 220, 330))
-
-	def next_launch_frame(self, playBackSpeed):
-		self.playBackSpeed = playBackSpeed
-		self.framesPast += 1
-		self.currentCenterX += self.initialXVelocity * playBackSpeed / FPS
-		self.currentYVelocity += GRAVITY * playBackSpeed / FPS
-		self.currentCenterY += self.currentYVelocity * playBackSpeed / FPS
-
-		if self.currentCenterY >= self.calculate_total_vertical_distance():
-			self.set_state("doneAnimating")
-
-			self.currentCenterX = self.calculate_total_horizontal_distance() + self.originalCenterX
-			self.currentCenterY = self.calculate_total_vertical_distance()
-
-	def after_animation(self, surface):
 		if self.state == "doneAnimating":
-			valueFont = pygame.font.SysFont("jost700", 20)
-			timeText = valueFont.render("Time: " + str("{:.3f}".format(round(self.calculate_time(), 3))) + " s", True, textColor)
-			surface.blit(timeText, (SCREEN_WIDTH - 220, 300))
+			draw_text_right(screen, SCREEN_WIDTH - 130, 100, 20, "Time:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 100, 20, str("{:.3f}".format(self.calculate_time_till_ground())) + " s")
 
-			heightText = valueFont.render("Max Height: " + str(round(self.calculate_vertical_position(self.calculate_time_max_height()), 2)) + " m",
-										  True, textColor)
-			surface.blit(heightText, (SCREEN_WIDTH - 220, 330))
+			draw_text_right(screen, SCREEN_WIDTH - 130, 130, 20, "Speed:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 130, 20, str(self.playBackSpeed) + "x")
+
+			draw_text_right(screen, SCREEN_WIDTH - 130, 160, 20, "Max Height:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 160, 20,
+						   str("{:.3f}".format(self.calculate_vertical_position(self.calculate_time_max_height()))) + " m")
 
 			if self.arrowWidth < self.calculate_total_horizontal_distance() - Kinematics.massRadius - 20:
 				self.arrowWidth += 800 / FPS
 			else:
 				self.arrowWidth = self.calculate_total_horizontal_distance() - Kinematics.massRadius - 20
-				pygame.draw.polygon(surface, objectsColor, ((self.currentCenterX - Kinematics.massRadius - 20, self.currentCenterY - 10),
-															(self.currentCenterX - Kinematics.massRadius - 20 + 10, self.currentCenterY),
-															(self.currentCenterX - Kinematics.massRadius - 20, self.currentCenterY + 10)))
+				pygame.draw.polygon(screen, objectsColor, ((self.currentCenterX - Kinematics.massRadius - 20, self.currentCenterY - 10),
+														   (self.currentCenterX - Kinematics.massRadius - 20 + 10, self.currentCenterY),
+														   (self.currentCenterX - Kinematics.massRadius - 20, self.currentCenterY + 10)))
 
-				distanceText = valueFont.render(str(round(self.calculate_total_horizontal_distance(), 3)) + " m", True, textColor)
-				textPosition = distanceText.get_rect(center=(
-					self.calculate_total_horizontal_distance() / 2 + self.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - 3 - 10))
-				surface.blit(distanceText, textPosition)
+				draw_text_center(screen, self.calculate_total_horizontal_distance() / 2 + self.originalCenterX,
+								 Kinematics.groundHeight - Kinematics.massRadius - 30, 20,
+								 str("{:.3f}".format(self.calculate_total_horizontal_distance())) + " m")
 
-			pygame.draw.rect(surface, objectsColor, (self.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - 3, self.arrowWidth, 6))
+			pygame.draw.rect(screen, objectsColor, (self.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - 3, self.arrowWidth, 6))
