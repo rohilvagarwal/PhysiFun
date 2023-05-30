@@ -2,7 +2,7 @@ from ProjectConstants import *
 
 
 class SliderBar:
-	def __init__(self, x, y, width, height, minValue, maxValue, defaultValue, title):
+	def __init__(self, x, y, width, height, minValue, maxValue, defaultValue, title, decimalPlaces=0):
 		self.x = x
 		self.y = y
 		self.width = width
@@ -12,9 +12,10 @@ class SliderBar:
 		self.valueRange = maxValue - minValue
 		self.value = defaultValue
 		self.handleWidth = height // 2
-		self.handlePos = self.value_to_pos(defaultValue)
 		self.handleSelected = False
 		self.title = title
+		self.decimalPlaces = decimalPlaces
+		self.handlePos = self.value_to_pos(defaultValue)
 
 	def get_value(self):
 		return self.value
@@ -25,11 +26,11 @@ class SliderBar:
 
 	def value_to_pos(self, value):
 		pos_range = self.width - self.handleWidth
-		return int(pos_range * (value - self.minValue) / self.valueRange)
+		return round(pos_range * (value - self.minValue) / self.valueRange, self.decimalPlaces)
 
 	def pos_to_value(self, pos):
 		pos_range = self.width - self.handleWidth
-		return int(pos * self.valueRange / pos_range + self.minValue)
+		return round(pos * self.valueRange / pos_range + self.minValue, self.decimalPlaces)
 
 	def draw(self, surface):
 		mousePos = pygame.mouse.get_pos()
@@ -61,7 +62,7 @@ class SliderBar:
 		pygame.draw.rect(surface, sliderBarHandleColor, handle_rect)
 
 		#write value
-		draw_text_top_left(surface, self.x, self.y + 15, 20, str(self.value))
+		draw_text_top_left(surface, self.x, self.y + 15, 20, "{:.{}f}".format(self.value, self.decimalPlaces))
 
 		#write title
 		draw_text_top_left(surface, self.x, self.y - 35, 25, self.title)

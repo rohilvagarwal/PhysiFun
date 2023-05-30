@@ -1,8 +1,11 @@
+import math
+
 from ProjectConstants import *
 import sys
 from Button import Button
 from SliderBar import SliderBar
 from Kinematics import Kinematics
+from CircularMotion import CircularMotion
 import time
 
 pygame.init()
@@ -24,18 +27,36 @@ GAME_OVER = False
 #game states: menu, kinematics, circularMotion, aboutMe
 gameState = "menu"
 
-#kinematics
-kinematicsAngleBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, -90, 90, 0, "Angle (°)")
-kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
-kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
-kinematicsMass = Kinematics(100, 500, 100, 0)
-launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Launch")
+#general buttons
 defaultButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10, text="Default")
 pauseButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Pause")
 resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10, text="Reset")
+
+#kinematics
+kinematicsObj = Kinematics(100, 500, 50, 0)
+kinematicsAngleBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, -90, 90, 0, "Angle (°)")
+kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
+kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
+launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Launch")
 oneXSpeed = Button(centerX=300, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="1x")
 threeXSpeed = Button(centerX=350, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="3x")
 fiveXSpeed = Button(centerX=400, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="5x")
+
+#circularMotion
+circularMotionObj = CircularMotion(SCREEN_WIDTH / 2 - 250, CircularMotion.groundHeight / 2, 50)
+minRotationalVelocity = -8
+maxRotationalVelocity = 8
+circularRotationalVelocityBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, minRotationalVelocity, maxRotationalVelocity, math.pi,
+										  "Rotational Vel. (rad/s)", 2)
+minTangentialVelocity = -1600
+maxTangentialVelocity = 1600
+circularTangentialVelocityBar = SliderBar(290, SCREEN_HEIGHT - 50, 200, 20, minTangentialVelocity, maxTangentialVelocity, math.pi * 100,
+										  "Tangential Vel. (m/s)", 2)
+circularRadiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 50, 200, 100, "Radius (m)")
+
+
+# kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
+# kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
 
 
 def menu_button(centerY, text):
@@ -93,51 +114,13 @@ def draw_kinematics():
 
 	draw_text_center(screen, 100, SCREEN_HEIGHT - 110, 20, "Playback Speed:")
 	if oneXSpeed.draw_and_check_click(screen):
-		kinematicsMass.set_playbackSpeed(1)
+		kinematicsObj.set_playbackSpeed(1)
 	if threeXSpeed.draw_and_check_click(screen):
-		kinematicsMass.set_playbackSpeed(3)
+		kinematicsObj.set_playbackSpeed(3)
 	if fiveXSpeed.draw_and_check_click(screen):
-		kinematicsMass.set_playbackSpeed(5)
+		kinematicsObj.set_playbackSpeed(5)
 
-	if kinematicsMass.get_state() == "animating":
-		kinematicsAngleBar.draw_static(screen)
-		kinematicsHeightBar.draw_static(screen)
-		kinematicsVelocityBar.draw_static(screen)
-
-		if pauseButton.draw_and_check_click(screen):
-			kinematicsMass.set_state("paused")
-
-		if resetButton.draw_and_check_click(screen):
-			kinematicsMass.set_state("default")
-			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
-
-		#kinematicsMass.set_playbackSpeed(5)
-		kinematicsMass.next_launch_frame()
-
-	elif kinematicsMass.get_state() == "paused":
-		kinematicsAngleBar.draw_static(screen)
-		kinematicsHeightBar.draw_static(screen)
-		kinematicsVelocityBar.draw_static(screen)
-
-		if pauseButton.draw_and_check_click(screen):
-			kinematicsMass.set_state("animating")
-
-		if resetButton.draw_and_check_click(screen):
-			kinematicsMass.set_state("default")
-			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
-
-	elif kinematicsMass.get_state() == "doneAnimating":
-		kinematicsAngleBar.draw_static(screen)
-		kinematicsHeightBar.draw_static(screen)
-		kinematicsVelocityBar.draw_static(screen)
-
-		#kinematicsMass.after_animation(screen)
-
-		if resetButton.draw_and_check_click(screen):
-			kinematicsMass.set_state("default")
-			kinematicsMass.set_pos(kinematicsMass.originalCenterX, kinematicsMass.originalCenterY)
-
-	elif kinematicsMass.get_state() == "default":
+	if kinematicsObj.get_state() == "default":
 		if defaultButton.draw_and_check_click(screen):
 			kinematicsAngleBar.set_value(0)
 			kinematicsHeightBar.set_value(250)
@@ -147,20 +130,95 @@ def draw_kinematics():
 		kinematicsHeightBar.draw(screen)
 		kinematicsVelocityBar.draw(screen)
 
-		kinematicsMass.set_angle(kinematicsAngleBar.get_value())
-		kinematicsMass.set_pos(kinematicsMass.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - kinematicsHeightBar.get_value())
-		kinematicsMass.set_initial_velocity(kinematicsVelocityBar.get_value())
+		kinematicsObj.set_angle(kinematicsAngleBar.get_value())
+		kinematicsObj.set_pos(kinematicsObj.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - kinematicsHeightBar.get_value())
+		kinematicsObj.set_initial_velocity(kinematicsVelocityBar.get_value())
 
 		if launchButton.draw_and_check_click(screen):
-			kinematicsMass.set_state("animating")
+			kinematicsObj.set_state("animating")
 
-	kinematicsMass.draw_static(screen)
+	elif kinematicsObj.get_state() == "animating":
+		kinematicsAngleBar.draw_static(screen)
+		kinematicsHeightBar.draw_static(screen)
+		kinematicsVelocityBar.draw_static(screen)
+
+		if pauseButton.draw_and_check_click(screen):
+			kinematicsObj.set_state("paused")
+
+		if resetButton.draw_and_check_click(screen):
+			kinematicsObj.set_state("default")
+			kinematicsObj.set_pos(kinematicsObj.originalCenterX, kinematicsObj.originalCenterY)
+
+		#kinematicsMass.set_playbackSpeed(5)
+		kinematicsObj.next_launch_frame()
+
+	elif kinematicsObj.get_state() == "paused":
+		kinematicsAngleBar.draw_static(screen)
+		kinematicsHeightBar.draw_static(screen)
+		kinematicsVelocityBar.draw_static(screen)
+
+		if pauseButton.draw_and_check_click(screen):
+			kinematicsObj.set_state("animating")
+
+		if resetButton.draw_and_check_click(screen):
+			kinematicsObj.set_state("default")
+			kinematicsObj.set_pos(kinematicsObj.originalCenterX, kinematicsObj.originalCenterY)
+
+	elif kinematicsObj.get_state() == "doneAnimating":
+		kinematicsAngleBar.draw_static(screen)
+		kinematicsHeightBar.draw_static(screen)
+		kinematicsVelocityBar.draw_static(screen)
+
+		#kinematicsMass.after_animation(screen)
+
+		if resetButton.draw_and_check_click(screen):
+			kinematicsObj.set_state("default")
+			kinematicsObj.set_pos(kinematicsObj.originalCenterX, kinematicsObj.originalCenterY)
+
+	kinematicsObj.draw_static(screen)
 
 
 def draw_circular_motion():
 	screen.fill(backgroundColor)
 	draw_d4()
+
+	#buttons
 	return_to_menu_button()
+
+	if defaultButton.draw_and_check_click(screen):
+		circularRotationalVelocityBar.set_value(math.pi)
+		circularTangentialVelocityBar.set_value(math.pi * 100)
+		circularRadiusBar.set_value(100)
+		circularMotionObj.set_angle(0)
+
+	circularRotationalVelocityBar.draw(screen)
+	circularTangentialVelocityBar.draw(screen)
+	circularRadiusBar.draw(screen)
+
+	if not circularMotionObj.get_rotationalVelocity() == circularRotationalVelocityBar.get_value():
+		circularMotionObj.set_rotationalVelocity(circularRotationalVelocityBar.get_value())
+		circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+
+	if not circularMotionObj.get_tangentialVelocity() == circularTangentialVelocityBar.get_value():
+		circularMotionObj.set_tangentialVelocity(circularTangentialVelocityBar.get_value())
+		circularRotationalVelocityBar.set_value(circularMotionObj.get_rotationalVelocity())
+
+	if not circularMotionObj.get_radius() == circularRadiusBar.get_value():
+		circularMotionObj.set_radius(circularRadiusBar.get_value())
+		circularMotionObj.set_rotationalVelocity(circularRotationalVelocityBar.get_value())
+		circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+
+	if circularMotionObj.get_state() == "animating":
+		circularMotionObj.next_frame()
+
+		if pauseButton.draw_and_check_click(screen):
+			circularMotionObj.set_state("paused")
+
+	elif circularMotionObj.get_state() == "paused":
+		if pauseButton.draw_and_check_click(screen):
+			circularMotionObj.set_state("animating")
+
+	circularMotionObj.draw_static(screen)
 
 
 def draw_about_me():

@@ -10,7 +10,7 @@ class Kinematics:
 		self.state = "default"  #default, animating, paused, doneAnimating
 		self.originalCenterX = centerX
 		self.originalCenterY = centerY
-		self.angle = angle
+		self.angle = angle  #degrees
 		self.initialVelocity = initialVelocity
 		self.initialXVelocity = math.cos(math.radians(angle)) * self.initialVelocity
 		self.initialYVelocity = -math.sin(math.radians(angle)) * self.initialVelocity
@@ -109,20 +109,22 @@ class Kinematics:
 			self.currentCenterY = self.calculate_total_vertical_distance()
 
 	def draw_static(self, screen):
-		pygame.draw.circle(screen, objectsColor, (self.currentCenterX, self.currentCenterY), Kinematics.massRadius)
 		#ground
 		pygame.draw.rect(screen, objectsColor, (0, Kinematics.groundHeight, SCREEN_WIDTH, 10))
 
+		#mass
+		pygame.draw.circle(screen, objectsColor, (self.currentCenterX, self.currentCenterY), Kinematics.massRadius)
+
 		if self.state == "default":
-			arrowLayer = pygame.Surface((200, 200)).convert_alpha()
+			arrowLayer = pygame.Surface((200, 200)).convert_alpha()  #center is on center of mass
 			arrowLayer.fill((0, 0, 0, 0))
 
-			arrowWidth = self.initialVelocity / 100 * 50
+			arrowLength = self.initialVelocity / 100 * 50
 
-			pygame.draw.rect(arrowLayer, objectsColor, (100 + Kinematics.massRadius + 10, 97, arrowWidth, 6))
-			pygame.draw.polygon(arrowLayer, objectsColor, ((100 + Kinematics.massRadius + 10 + arrowWidth, 90),
-														   (100 + Kinematics.massRadius + 10 + arrowWidth + 10, 100),
-														   (100 + Kinematics.massRadius + 10 + arrowWidth, 110)))
+			pygame.draw.rect(arrowLayer, objectsColor, (100 + Kinematics.massRadius + 10, 97, arrowLength, 6))
+			pygame.draw.polygon(arrowLayer, objectsColor, ((100 + Kinematics.massRadius + 10 + arrowLength, 90),
+														   (100 + Kinematics.massRadius + 10 + arrowLength + 10, 100),
+														   (100 + Kinematics.massRadius + 10 + arrowLength, 110)))
 
 			rotatedSurface, center = rotate_surface(arrowLayer, self.angle, self.currentCenterX, self.currentCenterY)
 

@@ -33,17 +33,27 @@ ifMouseDownEarlier = False
 def ifClicked():
 	global ifMouseDownEarlier
 
-	if not ifMouseDownEarlier:
-		if pygame.mouse.get_pressed()[0] == 1:
+	# if not ifMouseDownEarlier:
+	# 	if pygame.mouse.get_pressed()[0] == 1:
+	# 		ifMouseDownEarlier = True
+	# 		print("Yes")
+	# 		return True
+	# if ifMouseDownEarlier is True:
+	# 	if pygame.mouse.get_pressed()[0] == 1:
+	# 		return False
+	# 	elif pygame.mouse.get_pressed()[0] == 0:
+	# 		ifMouseDownEarlier = False
+	# 		return False
+
+	if pygame.mouse.get_pressed()[0] == 1:
+		if not ifMouseDownEarlier:
 			ifMouseDownEarlier = True
 			#print("Yes")
 			return True
-	if ifMouseDownEarlier is True:
-		if pygame.mouse.get_pressed()[0] == 1:
-			return False
-		elif pygame.mouse.get_pressed()[0] == 0:
-			ifMouseDownEarlier = False
-			return False
+	else:
+		ifMouseDownEarlier = False
+
+	return False
 
 
 def rotate_surface(surface, angle, x, y):
