@@ -21,7 +21,7 @@ class SliderBar:
 		return self.value
 
 	def set_value(self, value):
-		self.value = value
+		self.value = round(value, self.decimalPlaces)
 		self.handlePos = self.value_to_pos(self.value)
 
 	def value_to_pos(self, value):
@@ -56,6 +56,10 @@ class SliderBar:
 		#draw bar
 		bar_rect = pygame.Rect(self.x, self.y + self.height // 2 - 1, self.width, 2)
 		pygame.draw.rect(surface, sliderBarColor, bar_rect)
+
+		#write lower and upper bounds
+		draw_text_left(surface, self.x, self.y + 3, 10, str(round(self.minValue, self.decimalPlaces)))
+		draw_text_right(surface, self.x + self.width, self.y + 3, 10, str(round(self.maxValue, self.decimalPlaces)))
 
 		#draw handle
 		handle_rect = pygame.Rect(self.x + self.handlePos, self.y, self.handleWidth, self.height)

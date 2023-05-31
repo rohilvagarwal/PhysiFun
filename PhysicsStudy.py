@@ -43,13 +43,13 @@ threeXSpeed = Button(centerX=350, centerY=SCREEN_HEIGHT - 110, width=40, height=
 fiveXSpeed = Button(centerX=400, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="5x")
 
 #circularMotion
-circularMotionObj = CircularMotion(SCREEN_WIDTH / 2 - 250, CircularMotion.groundHeight / 2, 50)
-minRotationalVelocity = -8
-maxRotationalVelocity = 8
+circularMotionObj = CircularMotion(SCREEN_WIDTH / 2 - 250, CircularMotion.groundHeight / 2, 100)
+minRotationalVelocity = -6 * math.pi
+maxRotationalVelocity = 6 * math.pi
 circularRotationalVelocityBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, minRotationalVelocity, maxRotationalVelocity, math.pi,
 										  "Rotational Vel. (rad/s)", 2)
-minTangentialVelocity = -1600
-maxTangentialVelocity = 1600
+minTangentialVelocity = -6 * math.pi * 200
+maxTangentialVelocity = 6 * math.pi * 200
 circularTangentialVelocityBar = SliderBar(290, SCREEN_HEIGHT - 50, 200, 20, minTangentialVelocity, maxTangentialVelocity, math.pi * 100,
 										  "Tangential Vel. (m/s)", 2)
 circularRadiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 50, 200, 100, "Radius (m)")
@@ -59,8 +59,8 @@ circularRadiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 50, 200, 100, "R
 # kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
 
 
-def menu_button(centerY, text):
-	return Button(centerX=200, centerY=centerY, width=230, height=50, textSize=30, borderSize=10, text=text)
+def menu_button(centerX, centerY, text):
+	return Button(centerX=centerX, centerY=centerY, width=230, height=50, textSize=30, borderSize=10, text=text)
 
 
 def return_to_menu_button():
@@ -86,10 +86,10 @@ def draw_menu():
 	draw_text_center(screen, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10, 70, "PhysicsStudy")
 	draw_text_center(screen, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5, 30, "By Rohil Agarwal")
 
-	kinematics = menu_button(2 * SCREEN_HEIGHT / 6, "Kinematics")
-	circularMotion = menu_button(3 * SCREEN_HEIGHT / 6, "Circular Motion")
-	aboutMe = menu_button(4 * SCREEN_HEIGHT / 6, "About Me")
-	exit = menu_button(5 * SCREEN_HEIGHT / 6, "Exit")
+	kinematics = menu_button(200, 2 * SCREEN_HEIGHT / 6, "Kinematics")
+	circularMotion = menu_button(200, 3 * SCREEN_HEIGHT / 6, "Circular Motion")
+	aboutMe = menu_button(200, 4 * SCREEN_HEIGHT / 6, "About Me")
+	exit = menu_button(200, 5 * SCREEN_HEIGHT / 6, "Exit")
 
 	#draw button and check if clicked
 	if kinematics.draw_and_check_click(screen):
