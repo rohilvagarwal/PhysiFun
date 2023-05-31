@@ -54,6 +54,9 @@ circularTangentialVelocityBar = SliderBar(290, SCREEN_HEIGHT - 50, 200, 20, minT
 										  "Tangential Vel. (m/s)", 2)
 circularRadiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 50, 200, 100, "Radius (m)")
 
+circularTangentialVelocityBar.set_lowerBoundValue(minRotationalVelocity * circularMotionObj.get_radius())
+circularTangentialVelocityBar.set_upperBoundValue(maxRotationalVelocity * circularMotionObj.get_radius())
+
 
 # kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
 # kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
@@ -191,22 +194,32 @@ def draw_circular_motion():
 		circularRadiusBar.set_value(100)
 		circularMotionObj.set_angle(0)
 
+		circularMotionObj.set_radius(100)
+		circularMotionObj.set_rotationalVelocity(math.pi)
+		circularMotionObj.set_tangentialVelocity(math.pi * 100)
+
 	circularRotationalVelocityBar.draw(screen)
 	circularTangentialVelocityBar.draw(screen)
 	circularRadiusBar.draw(screen)
 
-	if not circularMotionObj.get_rotationalVelocity() == circularRotationalVelocityBar.get_value():
+	#if not circularMotionObj.get_rotationalVelocity() == circularRotationalVelocityBar.get_value():
+	if circularRotationalVelocityBar.get_handleSelected():
 		circularMotionObj.set_rotationalVelocity(circularRotationalVelocityBar.get_value())
 		circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
 
-	if not circularMotionObj.get_tangentialVelocity() == circularTangentialVelocityBar.get_value():
+	#if not circularMotionObj.get_tangentialVelocity() == circularTangentialVelocityBar.get_value():
+	if circularTangentialVelocityBar.get_handleSelected():
 		circularMotionObj.set_tangentialVelocity(circularTangentialVelocityBar.get_value())
 		circularRotationalVelocityBar.set_value(circularMotionObj.get_rotationalVelocity())
 
-	if not circularMotionObj.get_radius() == circularRadiusBar.get_value():
+	#if not circularMotionObj.get_radius() == circularRadiusBar.get_value():
+	if circularRadiusBar.get_handleSelected():
 		circularMotionObj.set_radius(circularRadiusBar.get_value())
 		circularMotionObj.set_rotationalVelocity(circularRotationalVelocityBar.get_value())
 		circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+
+		circularTangentialVelocityBar.set_lowerBoundValue(minRotationalVelocity * circularMotionObj.get_radius())
+		circularTangentialVelocityBar.set_upperBoundValue(maxRotationalVelocity * circularMotionObj.get_radius())
 
 	if circularMotionObj.get_state() == "animating":
 		circularMotionObj.next_frame()

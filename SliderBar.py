@@ -16,6 +16,17 @@ class SliderBar:
 		self.title = title
 		self.decimalPlaces = decimalPlaces
 		self.handlePos = self.value_to_pos(defaultValue)
+		self.lowerBoundValue = minValue
+		self.upperBoundValue = maxValue
+
+	def get_handleSelected(self):
+		return self.handleSelected
+
+	def set_lowerBoundValue(self, lowerBoundValue):
+		self.lowerBoundValue = lowerBoundValue
+
+	def set_upperBoundValue(self, upperBoundValue):
+		self.upperBoundValue = upperBoundValue
 
 	def get_value(self):
 		return self.value
@@ -42,10 +53,14 @@ class SliderBar:
 			if self.x + self.handlePos - self.handleWidth // 2 <= mousePos[
 				0] <= self.x + self.handlePos + self.handleWidth + self.handleWidth // 2 and self.y <= mousePos[1] <= self.y + self.height:
 				self.handleSelected = True
-				self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, 0), self.width - self.handleWidth)
+				#self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, 0), self.width - self.handleWidth)
+				self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, self.value_to_pos(self.lowerBoundValue)),
+									 self.value_to_pos(self.upperBoundValue))
 				self.value = self.pos_to_value(self.handlePos)
 			elif self.handleSelected:
-				self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, 0), self.width - self.handleWidth)
+				#self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, 0), self.width - self.handleWidth)
+				self.handlePos = min(max(mousePos[0] - self.x - self.handleWidth // 2, self.value_to_pos(self.lowerBoundValue)),
+									 self.value_to_pos(self.upperBoundValue))
 				self.value = self.pos_to_value(self.handlePos)
 		else:
 			self.handleSelected = False
