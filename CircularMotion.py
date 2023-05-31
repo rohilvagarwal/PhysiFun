@@ -16,6 +16,12 @@ class CircularMotion:
 		self.tangentialVelocity = self.rotationalVelocity * self.radius
 		self.centripetalAcceleration = math.pow(self.tangentialVelocity, 2) / self.radius
 		self.angle = 0
+		self.horizontalVelocity = None
+		self.verticalVelocity = None
+
+	def calculate_horizontal_and_vertical_velocity(self):
+		self.verticalVelocity = math.cos(math.radians(self.angle)) * self.tangentialVelocity
+		self.horizontalVelocity = -math.sin(math.radians(self.angle)) * self.tangentialVelocity
 
 	def set_state(self, state):
 		self.state = state
@@ -54,10 +60,18 @@ class CircularMotion:
 
 	def next_frame(self):
 		self.angle += (self.rotationalVelocity * 180 / math.pi) / FPS
+		self.angle = self.angle % 360
 
 	def draw_static(self, screen):
 		#ground
 		pygame.draw.rect(screen, objectsColor, (0, CircularMotion.groundHeight, SCREEN_WIDTH, 10))
+
+		#screen segments
+		pygame.draw.rect(screen, objectsColor, (self.pivotX * 2 - 5, 0, 10, CircularMotion.groundHeight))
+
+		#titles
+		draw_text_center(screen, self.pivotX, 30, 30, "Circular Motion")
+		draw_text_center(screen, SCREEN_WIDTH - self.pivotX - 50, 30, 30, "Instantaneous Vel.")
 
 		#pivot
 		pygame.draw.circle(screen, objectsColor, (self.pivotX, self.pivotY), CircularMotion.pivotRadius)
@@ -77,6 +91,58 @@ class CircularMotion:
 		rotatedSurface, center = rotate_surface(arrowAndMassLayer, self.angle, self.pivotX, self.pivotY)
 
 		screen.blit(rotatedSurface, center)
+
+		#Velocities Visualization
+		self.calculate_horizontal_and_vertical_velocity()
+
+		pygame.draw.circle(screen, objectsColor, (SCREEN_WIDTH - self.pivotX, self.pivotY), CircularMotion.pivotRadius)
+
+		horizontalVelocityArrowLength = self.horizontalVelocity / (4 * math.pi * 200) * 200
+		verticalVelocityArrowLength = self.verticalVelocity / (4 * math.pi * 200) * 200
+
+		if horizontalVelocityArrowLength > 0:
+			pygame.draw.rect(screen, objectsColor,
+							 (SCREEN_WIDTH - self.pivotX + CircularMotion.pivotRadius + 10, self.pivotY - 3, horizontalVelocityArrowLength, 6))
+			pygame.draw.polygon(screen, objectsColor,
+								((SCREEN_WIDTH - self.pivotX + CircularMotion.pivotRadius + 10 + horizontalVelocityArrowLength, self.pivotY - 10),
+								 (SCREEN_WIDTH - self.pivotX + CircularMotion.pivotRadius + 10 + horizontalVelocityArrowLength + 10, self.pivotY),
+								 (SCREEN_WIDTH - self.pivotX + CircularMotion.pivotRadius + 10 + horizontalVelocityArrowLength, self.pivotY + 10)))
+		# pygame.draw.polygon(screen, objectsColor,
+		# 					((SCREEN_WIDTH - self.pivotX - CircularMotion.pivotRadius - 10, self.pivotY - 10),
+		# 					 (SCREEN_WIDTH - self.pivotX - CircularMotion.pivotRadius - 10 - 10, self.pivotY),
+		# 					 (SCREEN_WIDTH - self.pivotX - CircularMotion.pivotRadius - 10, self.pivotY + 10)))
+
+		elif horizontalVelocityArrowLength < 0:
+			pygame.draw.rect(screen, objectsColor, (
+				SCREEN_WIDTH - self.pivotX - CircularMotion.pivotRadius - 10 + horizontalVelocityArrowLength, self.pivotY - 3,
+				-horizontalVelocityArrowLength, 6))
+
+			pygame.draw.polygon(screen, objectsColor,
+								((SCREEN_WIDTH - self.pivotX - CircularMotion.pivotRadius - 10 + horizontalVelocityArrowLength, self.pivotY - 10),
+								 (SCREEN_WIDTH - self.pivotX - CircularMotion.pivotRadius - 10 + horizontalVelocityArrowLength - 10, self.pivotY),
+								 (SCREEN_WIDTH - self.pivotX - CircularMotion.pivotRadius - 10 + horizontalVelocityArrowLength, self.pivotY + 10)))
+
+		if verticalVelocityArrowLength > 0:
+			pygame.draw.rect(screen, objectsColor, (
+				SCREEN_WIDTH - self.pivotX - 3, self.pivotY - CircularMotion.pivotRadius - 10 - verticalVelocityArrowLength, 6,
+				verticalVelocityArrowLength))
+			pygame.draw.polygon(screen, objectsColor,
+								((SCREEN_WIDTH - self.pivotX - 10, self.pivotY - CircularMotion.pivotRadius - 10 - verticalVelocityArrowLength),
+								 (SCREEN_WIDTH - self.pivotX, self.pivotY - CircularMotion.pivotRadius - 10 - verticalVelocityArrowLength - 10),
+								 (SCREEN_WIDTH - self.pivotX + 10, self.pivotY - CircularMotion.pivotRadius - 10 - verticalVelocityArrowLength)))
+
+		elif verticalVelocityArrowLength < 0:
+			pygame.draw.rect(screen, objectsColor, (
+				SCREEN_WIDTH - self.pivotX - 3, self.pivotY + CircularMotion.pivotRadius + 10, 6,
+				-verticalVelocityArrowLength))
+			pygame.draw.polygon(screen, objectsColor,
+								((SCREEN_WIDTH - self.pivotX - 10, self.pivotY + CircularMotion.pivotRadius + 10 - verticalVelocityArrowLength),
+								 (SCREEN_WIDTH - self.pivotX, self.pivotY + CircularMotion.pivotRadius + 10 - verticalVelocityArrowLength + 10),
+								 (SCREEN_WIDTH - self.pivotX + 10, self.pivotY + CircularMotion.pivotRadius + 10 - verticalVelocityArrowLength)))
+
+		#Stats
+		draw_text_right(screen, self.pivotX - 5, CircularMotion.groundHeight - 20, 20, "Centripetal Acceleration:")
+		draw_text_left(screen, self.pivotX + 5, CircularMotion.groundHeight - 20, 20, str("{:.1f}".format(self.centripetalAcceleration)) + " m/s^2")
 
 	@staticmethod
 	def calculate_rotationalVelocity_test(tangentialVelocity, radius):

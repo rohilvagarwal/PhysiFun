@@ -8,14 +8,14 @@ from Kinematics import Kinematics
 from CircularMotion import CircularMotion
 import time
 
-pygame.init()
+#pygame.init()
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Main Menu")
 
 #image imports
 d4 = pygame.image.load('images/d4Logo.svg')
-scaled_d4 = pygame.transform.scale(d4, (100, 100))
+scaled_d4 = pygame.transform.scale(d4, (50, 50))
 
 rojWidth = 300
 roj = pygame.image.load('images/roj.png')
@@ -30,6 +30,7 @@ gameState = "menu"
 #general buttons
 defaultButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10, text="Default")
 pauseButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Pause")
+resumeButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Resume")
 resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10, text="Reset")
 
 #kinematics
@@ -44,18 +45,24 @@ fiveXSpeed = Button(centerX=400, centerY=SCREEN_HEIGHT - 110, width=40, height=4
 
 #circularMotion
 circularMotionObj = CircularMotion(SCREEN_WIDTH / 2 - 250, CircularMotion.groundHeight / 2, 100)
-minRotationalVelocity = -6 * math.pi
-maxRotationalVelocity = 6 * math.pi
+minRotationalVelocity = -4 * math.pi
+maxRotationalVelocity = 4 * math.pi
 circularRotationalVelocityBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, minRotationalVelocity, maxRotationalVelocity, math.pi,
 										  "Rotational Vel. (rad/s)", 2)
-minTangentialVelocity = -6 * math.pi * 200
-maxTangentialVelocity = 6 * math.pi * 200
+minTangentialVelocity = -4 * math.pi * 200
+maxTangentialVelocity = 4 * math.pi * 200
 circularTangentialVelocityBar = SliderBar(290, SCREEN_HEIGHT - 50, 200, 20, minTangentialVelocity, maxTangentialVelocity, math.pi * 100,
 										  "Tangential Vel. (m/s)", 2)
 circularRadiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 50, 200, 100, "Radius (m)")
 
 circularTangentialVelocityBar.set_lowerBoundValue(minRotationalVelocity * circularMotionObj.get_radius())
 circularTangentialVelocityBar.set_upperBoundValue(maxRotationalVelocity * circularMotionObj.get_radius())
+
+minusPi = Button(centerX=35, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=20, borderSize=10, text="-π")
+minusPiOverTwo = Button(centerX=80, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=10, borderSize=10, text="-π/2")
+zeroPi = Button(centerX=125, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=20, borderSize=10, text="0")
+plusPiOverTwo = Button(centerX=170, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=10, borderSize=10, text="+π/2")
+plusPi = Button(centerX=215, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=20, borderSize=10, text="+π")
 
 
 # kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
@@ -76,7 +83,7 @@ def return_to_menu_button():
 
 
 def draw_d4():
-	screen.blit(scaled_d4, (10, 10))
+	screen.blit(scaled_d4, (0, 10))
 
 
 def draw_menu():
@@ -160,7 +167,7 @@ def draw_kinematics():
 		kinematicsHeightBar.draw_static(screen)
 		kinematicsVelocityBar.draw_static(screen)
 
-		if pauseButton.draw_and_check_click(screen):
+		if resumeButton.draw_and_check_click(screen):
 			kinematicsObj.set_state("animating")
 
 		if resetButton.draw_and_check_click(screen):
@@ -198,6 +205,51 @@ def draw_circular_motion():
 		circularMotionObj.set_rotationalVelocity(math.pi)
 		circularMotionObj.set_tangentialVelocity(math.pi * 100)
 
+	if minusPi.draw_and_check_click(screen):
+		if circularMotionObj.get_rotationalVelocity() - math.pi < minRotationalVelocity:
+			circularRotationalVelocityBar.set_value(minRotationalVelocity)
+			circularMotionObj.set_rotationalVelocity(minRotationalVelocity)
+			circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+		else:
+			circularRotationalVelocityBar.set_value(circularMotionObj.get_rotationalVelocity() - math.pi)
+			circularMotionObj.set_rotationalVelocity(circularMotionObj.get_rotationalVelocity() - math.pi)
+			circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+
+	if minusPiOverTwo.draw_and_check_click(screen):
+		if circularMotionObj.get_rotationalVelocity() - math.pi / 2 < minRotationalVelocity:
+			circularRotationalVelocityBar.set_value(minRotationalVelocity)
+			circularMotionObj.set_rotationalVelocity(minRotationalVelocity)
+			circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+		else:
+			circularRotationalVelocityBar.set_value(circularMotionObj.get_rotationalVelocity() - math.pi / 2)
+			circularMotionObj.set_rotationalVelocity(circularMotionObj.get_rotationalVelocity() - math.pi / 2)
+			circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+
+	if zeroPi.draw_and_check_click(screen):
+		circularRotationalVelocityBar.set_value(0)
+		circularMotionObj.set_rotationalVelocity(0)
+		circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+
+	if plusPiOverTwo.draw_and_check_click(screen):
+		if circularMotionObj.get_rotationalVelocity() + math.pi / 2 > maxRotationalVelocity:
+			circularRotationalVelocityBar.set_value(maxRotationalVelocity)
+			circularMotionObj.set_rotationalVelocity(maxRotationalVelocity)
+			circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+		else:
+			circularRotationalVelocityBar.set_value(circularMotionObj.get_rotationalVelocity() + math.pi / 2)
+			circularMotionObj.set_rotationalVelocity(circularMotionObj.get_rotationalVelocity() + math.pi / 2)
+			circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+
+	if plusPi.draw_and_check_click(screen):
+		if circularMotionObj.get_rotationalVelocity() + math.pi > maxRotationalVelocity:
+			circularRotationalVelocityBar.set_value(maxRotationalVelocity)
+			circularMotionObj.set_rotationalVelocity(maxRotationalVelocity)
+			circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+		else:
+			circularRotationalVelocityBar.set_value(circularMotionObj.get_rotationalVelocity() + math.pi)
+			circularMotionObj.set_rotationalVelocity(circularMotionObj.get_rotationalVelocity() + math.pi)
+			circularTangentialVelocityBar.set_value(circularMotionObj.get_tangentialVelocity())
+
 	circularRotationalVelocityBar.draw(screen)
 	circularTangentialVelocityBar.draw(screen)
 	circularRadiusBar.draw(screen)
@@ -228,7 +280,7 @@ def draw_circular_motion():
 			circularMotionObj.set_state("paused")
 
 	elif circularMotionObj.get_state() == "paused":
-		if pauseButton.draw_and_check_click(screen):
+		if resumeButton.draw_and_check_click(screen):
 			circularMotionObj.set_state("animating")
 
 	circularMotionObj.draw_static(screen)

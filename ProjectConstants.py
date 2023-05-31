@@ -1,5 +1,7 @@
 import pygame
 
+pygame.init()
+
 #Project Constants
 #game window
 SCREEN_WIDTH = 1000
@@ -56,8 +58,6 @@ def rotate_surface(surface, angle, x, y):
 
 	return rotated_surface, rect
 
-
-pygame.init()
 
 #10, 20, 25, 30, 70
 font10 = pygame.font.SysFont("jost700", 10)
