@@ -44,16 +44,16 @@ threeXSpeed = Button(centerX=260, centerY=SCREEN_HEIGHT - 110, width=40, height=
 fiveXSpeed = Button(centerX=310, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="5x")
 
 #circularMotion
-circularMotionObj = CircularMotion(SCREEN_WIDTH / 2 - 250, CircularMotion.groundHeight / 2, 100)
+circularMotionObj = CircularMotion(SCREEN_WIDTH / 2 - 250, CircularMotion.groundHeight / 2, 10)
 minRotationalVelocity = -4 * math.pi
 maxRotationalVelocity = 4 * math.pi
 circularRotationalVelocityBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, minRotationalVelocity, maxRotationalVelocity, math.pi,
 										  "Rotational Vel. (rad/s)", 2)
-minTangentialVelocity = -4 * math.pi * 200
-maxTangentialVelocity = 4 * math.pi * 200
-circularTangentialVelocityBar = SliderBar(290, SCREEN_HEIGHT - 50, 200, 20, minTangentialVelocity, maxTangentialVelocity, math.pi * 100,
+minTangentialVelocity = -4 * math.pi * 20
+maxTangentialVelocity = 4 * math.pi * 20
+circularTangentialVelocityBar = SliderBar(290, SCREEN_HEIGHT - 50, 200, 20, minTangentialVelocity, maxTangentialVelocity, math.pi * 10,
 										  "Tangential Vel. (m/s)", 2)
-circularRadiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 50, 200, 100, "Radius (m)")
+circularRadiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 5, 20, 10, "Radius (m)", 1)
 
 circularTangentialVelocityBar.set_lowerBoundValue(minRotationalVelocity * circularMotionObj.get_radius())
 circularTangentialVelocityBar.set_upperBoundValue(maxRotationalVelocity * circularMotionObj.get_radius())
@@ -197,13 +197,13 @@ def draw_circular_motion():
 
 	if defaultButton.draw_and_check_click(screen):
 		circularRotationalVelocityBar.set_value(math.pi)
-		circularTangentialVelocityBar.set_value(math.pi * 100)
-		circularRadiusBar.set_value(100)
+		circularTangentialVelocityBar.set_value(math.pi * 10)
+		circularRadiusBar.set_value(10)
 		circularMotionObj.set_angle(0)
 
-		circularMotionObj.set_radius(100)
+		circularMotionObj.set_radius(10)
 		circularMotionObj.set_rotationalVelocity(math.pi)
-		circularMotionObj.set_tangentialVelocity(math.pi * 100)
+		circularMotionObj.set_tangentialVelocity(math.pi * 10)
 
 	if minusPi.draw_and_check_click(screen):
 		if circularMotionObj.get_rotationalVelocity() - math.pi < minRotationalVelocity:
@@ -283,7 +283,7 @@ def draw_circular_motion():
 		if resumeButton.draw_and_check_click(screen):
 			circularMotionObj.set_state("animating")
 
-	circularMotionObj.draw_static(screen)
+	circularMotionObj.draw_static(screen, 0.1, maxTangentialVelocity)  #1 pixel is 0.1m
 
 
 def draw_about_me():

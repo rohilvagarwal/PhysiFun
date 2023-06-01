@@ -62,7 +62,15 @@ class CircularMotion:
 		self.angle += (self.rotationalVelocity * 180 / math.pi) / FPS
 		self.angle = self.angle % 360
 
-	def draw_static(self, screen):
+	def draw_static(self, screen, scale, maxTangentialVelocity):
+		#Scale bar
+		#draw scale bar (1 pixel is scale meters)
+		pygame.draw.rect(screen, objectsColor, (SCREEN_WIDTH - 25 - 100 - 4, 75 + 20 - 2, 100, 4))  #bar
+		pygame.draw.rect(screen, objectsColor, (SCREEN_WIDTH - 25 - 100 - 4 - 4, 75 + 20 - 10, 4, 20))  #left edge
+		pygame.draw.rect(screen, objectsColor, (SCREEN_WIDTH - 25 - 4, 75 + 20 - 10, 4, 20))  #right edge
+		draw_text_center(screen, SCREEN_WIDTH - 25 - 50 - 4, 75 + 20 + 10, 15, str("{:.0f}".format(100 * scale)) + "m")
+		draw_text_right(screen, SCREEN_WIDTH - 25, 12, 15, "*Each Pixel is " + str(scale) + "m")
+
 		#ground
 		pygame.draw.rect(screen, objectsColor, (0, CircularMotion.groundHeight, SCREEN_WIDTH, 10))
 
@@ -80,10 +88,11 @@ class CircularMotion:
 		arrowAndMassLayer = pygame.Surface((500, 500)).convert_alpha()  #center is on pivot point
 		arrowAndMassLayer.fill((0, 0, 0, 0))
 
-		pygame.draw.circle(arrowAndMassLayer, objectsColor, (250 + self.radius, 250), CircularMotion.massRadius)  #radius max 200
+		pygame.draw.circle(arrowAndMassLayer, objectsColor, (250 + self.radius / scale, 250), CircularMotion.massRadius)  #radius max 200
 
 		pygame.draw.rect(arrowAndMassLayer, objectsColor, (
-			250 + CircularMotion.pivotRadius + 10 + 10, 247, self.radius - CircularMotion.massRadius - CircularMotion.pivotRadius - 10 - 10 - 10, 6))
+			250 + CircularMotion.pivotRadius + 10 + 10, 247,
+			self.radius / scale - CircularMotion.massRadius - CircularMotion.pivotRadius - 10 - 10 - 10, 6))
 		pygame.draw.polygon(arrowAndMassLayer, objectsColor, ((250 + CircularMotion.pivotRadius + 10 + 10, 240),
 															  (250 + CircularMotion.pivotRadius + 10, 250),
 															  (250 + CircularMotion.pivotRadius + 10 + 10, 260)))
@@ -97,8 +106,8 @@ class CircularMotion:
 
 		pygame.draw.circle(screen, objectsColor, (SCREEN_WIDTH - self.pivotX, self.pivotY), CircularMotion.pivotRadius)
 
-		horizontalVelocityArrowLength = self.horizontalVelocity / (4 * math.pi * 200) * 200
-		verticalVelocityArrowLength = self.verticalVelocity / (4 * math.pi * 200) * 200
+		horizontalVelocityArrowLength = self.horizontalVelocity / maxTangentialVelocity * 200
+		verticalVelocityArrowLength = self.verticalVelocity / maxTangentialVelocity * 200
 
 		if horizontalVelocityArrowLength > 0:
 			pygame.draw.rect(screen, objectsColor,
