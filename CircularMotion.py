@@ -18,6 +18,10 @@ class CircularMotion:
 		self.angle = 0
 		self.horizontalVelocity = None
 		self.verticalVelocity = None
+		self.playBackSpeed = 1
+
+	def set_playBackSpeed(self, playBackSpeed):
+		self.playBackSpeed = playBackSpeed
 
 	def calculate_horizontal_and_vertical_velocity(self):
 		self.verticalVelocity = math.cos(math.radians(self.angle)) * self.tangentialVelocity
@@ -59,7 +63,7 @@ class CircularMotion:
 		self.centripetalAcceleration = math.pow(self.tangentialVelocity, 2) / self.radius
 
 	def next_frame(self):
-		self.angle += (self.rotationalVelocity * 180 / math.pi) / FPS
+		self.angle += (self.rotationalVelocity * 180 / math.pi) * self.playBackSpeed / FPS
 		self.angle = self.angle % 360
 
 	def draw_static(self, screen, scale, maxTangentialVelocity):
@@ -70,6 +74,10 @@ class CircularMotion:
 		pygame.draw.rect(screen, objectsColor, (SCREEN_WIDTH - 25 - 4, 75 + 20 - 10, 4, 20))  #right edge
 		draw_text_center(screen, SCREEN_WIDTH - 25 - 50 - 4, 75 + 20 + 10, 15, str("{:.0f}".format(100 * scale)) + "m")
 		draw_text_right(screen, SCREEN_WIDTH - 25, 12, 15, "*Each Pixel is " + str(scale) + "m")
+
+		#stats
+		draw_text_right(screen, SCREEN_WIDTH - 130, 140, 20, "Speed:")
+		draw_text_left(screen, SCREEN_WIDTH - 120, 140, 20, str(self.playBackSpeed) + "x")
 
 		#ground
 		pygame.draw.rect(screen, objectsColor, (0, CircularMotion.groundHeight, SCREEN_WIDTH, 10))

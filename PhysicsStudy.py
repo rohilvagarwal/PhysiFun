@@ -38,10 +38,11 @@ kinematicsObj = Kinematics(100, 500, 50, 0)
 kinematicsAngleBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, -90, 90, 0, "Angle (°)")
 kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
 kinematicsVelocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
-launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10, text="Launch")
-oneXSpeed = Button(centerX=210, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="1x")
-threeXSpeed = Button(centerX=260, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="3x")
-fiveXSpeed = Button(centerX=310, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="5x")
+kinematicsLaunchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10,
+								text="Launch")
+kinematicsOneXSpeed = Button(centerX=210, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="1x")
+kinematicsThreeXSpeed = Button(centerX=260, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="3x")
+kinematicsFiveXSpeed = Button(centerX=310, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="5x")
 
 #circularMotion
 circularMotionObj = CircularMotion(SCREEN_WIDTH / 2 - 250, CircularMotion.groundHeight / 2, 10)
@@ -58,11 +59,16 @@ circularRadiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 5, 20, 10, "Radi
 circularTangentialVelocityBar.set_lowerBoundValue(minRotationalVelocity * circularMotionObj.get_radius())
 circularTangentialVelocityBar.set_upperBoundValue(maxRotationalVelocity * circularMotionObj.get_radius())
 
-minusPi = Button(centerX=35, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=20, borderSize=10, text="-π")
-minusPiOverTwo = Button(centerX=80, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=10, borderSize=10, text="-π/2")
-zeroPi = Button(centerX=125, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=20, borderSize=10, text="0")
-plusPiOverTwo = Button(centerX=170, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=10, borderSize=10, text="+π/2")
-plusPi = Button(centerX=215, centerY=SCREEN_HEIGHT - 100, width=40, height=40, textSize=20, borderSize=10, text="+π")
+minusPi = Button(centerX=35, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="-π")
+minusPiOverTwo = Button(centerX=80, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=10, borderSize=10, text="-π/2")
+zeroPi = Button(centerX=125, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="0")
+plusPiOverTwo = Button(centerX=170, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=10, borderSize=10, text="+π/2")
+plusPi = Button(centerX=215, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="+π")
+
+circularOneXSpeed = Button(centerX=460, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="1x")
+circularHalfXSpeed = Button(centerX=510, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=12, borderSize=10, text="0.5x")
+circularFourthXSpeed = Button(centerX=560, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=10, borderSize=10, text="0.25x")
+circularTenthXSpeed = Button(centerX=610, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=12, borderSize=10, text="0.1x")
 
 
 # kinematicsHeightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
@@ -123,11 +129,11 @@ def draw_kinematics():
 	return_to_menu_button()
 
 	draw_text_center(screen, 100, SCREEN_HEIGHT - 110, 20, "Playback Speed:")
-	if oneXSpeed.draw_and_check_click(screen):
+	if kinematicsOneXSpeed.draw_and_check_click(screen):
 		kinematicsObj.set_playbackSpeed(1)
-	if threeXSpeed.draw_and_check_click(screen):
+	if kinematicsThreeXSpeed.draw_and_check_click(screen):
 		kinematicsObj.set_playbackSpeed(3)
-	if fiveXSpeed.draw_and_check_click(screen):
+	if kinematicsFiveXSpeed.draw_and_check_click(screen):
 		kinematicsObj.set_playbackSpeed(5)
 
 	if kinematicsObj.get_state() == "default":
@@ -144,7 +150,7 @@ def draw_kinematics():
 		kinematicsObj.set_pos(kinematicsObj.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - kinematicsHeightBar.get_value())
 		kinematicsObj.set_initial_velocity(kinematicsVelocityBar.get_value())
 
-		if launchButton.draw_and_check_click(screen):
+		if kinematicsLaunchButton.draw_and_check_click(screen):
 			kinematicsObj.set_state("animating")
 
 	elif kinematicsObj.get_state() == "animating":
@@ -194,6 +200,16 @@ def draw_circular_motion():
 
 	#buttons
 	return_to_menu_button()
+
+	draw_text_center(screen, 355, SCREEN_HEIGHT - 110, 20, "Playback Speed:")
+	if circularOneXSpeed.draw_and_check_click(screen):
+		circularMotionObj.set_playBackSpeed(1)
+	if circularHalfXSpeed.draw_and_check_click(screen):
+		circularMotionObj.set_playBackSpeed(0.5)
+	if circularFourthXSpeed.draw_and_check_click(screen):
+		circularMotionObj.set_playBackSpeed(0.25)
+	if circularTenthXSpeed.draw_and_check_click(screen):
+		circularMotionObj.set_playBackSpeed(0.1)
 
 	if defaultButton.draw_and_check_click(screen):
 		circularRotationalVelocityBar.set_value(math.pi)

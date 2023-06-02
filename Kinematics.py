@@ -142,21 +142,21 @@ class Kinematics:
 			draw_text_right(screen, SCREEN_WIDTH - 10, 412, 10, "exceed the edge!")
 
 		if not self.state == "doneAnimating":
-			draw_text_right(screen, SCREEN_WIDTH - 130, 140, 20, "Time:")
-			draw_text_left(screen, SCREEN_WIDTH - 120, 140, 20, str("{:.3f}".format(self.currentTime)) + " s")
+			draw_text_right(screen, SCREEN_WIDTH - 130, 140, 20, "Speed:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 140, 20, str(self.playBackSpeed) + "x")
 
-			draw_text_right(screen, SCREEN_WIDTH - 130, 170, 20, "Speed:")
-			draw_text_left(screen, SCREEN_WIDTH - 120, 170, 20, str(self.playBackSpeed) + "x")
+			draw_text_right(screen, SCREEN_WIDTH - 130, 170, 20, "Time:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 170, 20, str("{:.3f}".format(self.currentTime)) + " s")
 
 			draw_text_right(screen, SCREEN_WIDTH - 130, 200, 20, "Max Height:")
 			draw_text_left(screen, SCREEN_WIDTH - 120, 200, 20, "?")
 
 		if self.state == "doneAnimating":
-			draw_text_right(screen, SCREEN_WIDTH - 130, 140, 20, "Time:")
-			draw_text_left(screen, SCREEN_WIDTH - 120, 140, 20, str("{:.3f}".format(self.calculate_time_till_ground())) + " s")
-
-			draw_text_right(screen, SCREEN_WIDTH - 130, 170, 20, "Speed:")
-			draw_text_left(screen, SCREEN_WIDTH - 120, 170, 20, str(self.playBackSpeed) + "x")
+			draw_text_right(screen, SCREEN_WIDTH - 130, 140, 20, "Speed:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 140, 20, str(self.playBackSpeed) + "x")
+			
+			draw_text_right(screen, SCREEN_WIDTH - 130, 170, 20, "Time:")
+			draw_text_left(screen, SCREEN_WIDTH - 120, 170, 20, str("{:.3f}".format(self.calculate_time_till_ground())) + " s")
 
 			draw_text_right(screen, SCREEN_WIDTH - 130, 200, 20, "Max Height:")
 			draw_text_left(screen, SCREEN_WIDTH - 120, 200, 20,
