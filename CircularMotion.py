@@ -158,8 +158,12 @@ class CircularMotion:
 								 (SCREEN_WIDTH - self.pivotX + 10, self.pivotY + CircularMotion.pivotRadius + 10 - verticalVelocityArrowLength)))
 
 		#Stats
-		draw_text_right(screen, self.pivotX - 5, CircularMotion.groundHeight - 20, 20, "Centripetal Acceleration:")
-		draw_text_left(screen, self.pivotX + 5, CircularMotion.groundHeight - 20, 20, str("{:.1f}".format(self.centripetalAcceleration)) + " m/s^2")
+		#draw_text_right(screen, self.pivotX - 5, CircularMotion.groundHeight - 20, 20, "Centripetal Acceleration:")
+		#draw_text_left(screen, self.pivotX + 5, CircularMotion.groundHeight - 20, 20, str("{:.1f}".format(self.centripetalAcceleration)) + " m/s^2")
+		# draw_superscript(screen, draw_text_left(screen, self.pivotX + 5, CircularMotion.groundHeight - 20, 20,
+		# 										str("{:.1f}".format(self.centripetalAcceleration)) + " m/s"), "2")
+		draw_left_with_superscript(screen, 60, CircularMotion.groundHeight - 20, 20,
+								   "Centripetal Acceleration: " + str("{:.2f}".format(self.centripetalAcceleration)) + " m/s^2")
 
 	@staticmethod
 	def calculate_rotationalVelocity_test(tangentialVelocity, radius):
