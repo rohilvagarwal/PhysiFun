@@ -189,3 +189,38 @@ def draw_left_with_superscript(screen, leftX, centerY, textSize, text):
 			screen.blit(text, text_rect)
 
 			lastRightCoordinate = text_rect.right
+
+
+def draw_left_with_subscript(screen, leftX, centerY, textSize, text):
+	split_text = text.split('_')
+	cleaned_text = [sub_text for sub_text in split_text if sub_text]
+
+	lastRightCoordinate = leftX
+
+	for n in range(len(cleaned_text)):
+		if n % 2 == 0:
+			if textSize == 10:
+				font = font10
+			elif textSize == 20:
+				font = font20
+			elif textSize == 25:
+				font = font25
+			elif textSize == 30:
+				font = font30
+			elif textSize == 70:
+				font = font70
+			else:
+				font = pygame.font.SysFont("jost700", textSize)
+
+			text = font.render(cleaned_text[n], True, textColor)
+			text_rect = text.get_rect(left=lastRightCoordinate, centery=centerY)
+			screen.blit(text, text_rect)
+
+			lastRightCoordinate = text_rect.right
+
+		if n % 2 == 1:
+			text = font10.render(cleaned_text[n], True, textColor)
+			text_rect = text.get_rect(left=lastRightCoordinate, top=centerY + textSize * 1 / 10)
+			screen.blit(text, text_rect)
+
+			lastRightCoordinate = text_rect.right
