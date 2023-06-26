@@ -1,5 +1,7 @@
 import math
 
+import pygame
+
 from ProjectConstants import *
 import sys
 from Button import Button
@@ -14,12 +16,12 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Main Menu")
 
 #image imports
-d4 = pygame.image.load('images/d4Logo.svg')
-scaled_d4 = pygame.transform.scale(d4, (50, 50))
+d4 = pygame.image.load('images/d4Logo.svg').convert_alpha()
+scaled_d4 = pygame.transform.scale(d4, (50, 50)).convert_alpha()
 
 rojWidth = 300
-roj = pygame.image.load('images/roj.png')
-scaledRoj = pygame.transform.scale(roj, (rojWidth, rojWidth))
+roj = pygame.image.load('images/roj.png').convert_alpha()
+scaledRoj = pygame.transform.scale(roj, (rojWidth, rojWidth)).convert_alpha()
 
 #game variables
 GAME_OVER = False
@@ -92,11 +94,14 @@ def draw_d4():
 	screen.blit(scaled_d4, (0, 10))
 
 
+def all_pages():
+	screen.fill(backgroundColor)
+	draw_d4()
+
+
 def draw_menu():
 	global gameState
 	global GAME_OVER
-	screen.fill(backgroundColor)
-	draw_d4()
 
 	#draw title
 	draw_text_center(screen, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10, 70, "PhysicsStudy")
@@ -122,9 +127,6 @@ def draw_menu():
 
 
 def draw_kinematics():
-	screen.fill(backgroundColor)
-	draw_d4()
-
 	#buttons
 	return_to_menu_button()
 
@@ -195,9 +197,6 @@ def draw_kinematics():
 
 
 def draw_circular_motion():
-	screen.fill(backgroundColor)
-	draw_d4()
-
 	#buttons
 	return_to_menu_button()
 
@@ -303,8 +302,6 @@ def draw_circular_motion():
 
 
 def draw_about_me():
-	screen.fill(backgroundColor)
-	draw_d4()
 	return_to_menu_button()
 
 	screen.blit(scaledRoj, (SCREEN_WIDTH / 2 - rojWidth / 2, 50))
@@ -314,6 +311,7 @@ def draw_about_me():
 
 
 #game start
+all_pages()
 draw_menu()
 pygame.display.update()
 
@@ -323,6 +321,7 @@ start_time = time.time()
 
 while not GAME_OVER:
 	#startTime = time.time()
+	all_pages()
 
 	if gameState == "menu":
 		draw_menu()
