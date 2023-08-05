@@ -1,7 +1,7 @@
 from ProjectConstants import *
 import math
-from Button import Button
-from SliderBar import SliderBar
+from UIElements.Button import Button
+from UIElements.SliderBar import SliderBar
 
 
 class CircularMotion:

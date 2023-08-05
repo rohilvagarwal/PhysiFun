@@ -60,11 +60,11 @@ def rotate_surface(surface, angle, x, y):
 
 
 #10, 20, 25, 30, 70
-font10 = pygame.font.SysFont("jost700", 10)
-font20 = pygame.font.SysFont("jost700", 20)
-font25 = pygame.font.SysFont("jost700", 25)
-font30 = pygame.font.SysFont("jost700", 30)
-font70 = pygame.font.SysFont("jost700", 70)
+font10 = pygame.font.Font("fonts/Jost-700-Bold.otf", 10)
+font20 = pygame.font.Font("fonts/Jost-700-Bold.otf", 20)
+font25 = pygame.font.Font("fonts/Jost-700-Bold.otf", 25)
+font30 = pygame.font.Font("fonts/Jost-700-Bold.otf", 30)
+font70 = pygame.font.Font("fonts/Jost-700-Bold.otf", 70)
 
 
 def draw_text_center(screen, centerX, centerY, textSize, text):
@@ -79,7 +79,7 @@ def draw_text_center(screen, centerX, centerY, textSize, text):
 	elif textSize == 70:
 		font = font70
 	else:
-		font = pygame.font.SysFont("jost700", textSize)
+		font = pygame.font.Font("fonts/Jost-700-Bold.otf", textSize)
 
 	text = font.render(text, True, textColor)
 	text_rect = text.get_rect(center=(centerX, centerY))
@@ -100,7 +100,7 @@ def draw_text_left(screen, leftX, centerY, textSize, text):
 	elif textSize == 70:
 		font = font70
 	else:
-		font = pygame.font.SysFont("jost700", textSize)
+		font = pygame.font.Font("fonts/Jost-700-Bold.otf", textSize)
 
 	text = font.render(text, True, textColor)
 	text_rect = text.get_rect(left=leftX, centery=centerY)
@@ -121,7 +121,7 @@ def draw_text_right(screen, rightX, centerY, textSize, text):
 	elif textSize == 70:
 		font = font70
 	else:
-		font = pygame.font.SysFont("jost700", textSize)
+		font = pygame.font.Font("fonts/Jost-700-Bold.otf", textSize)
 
 	text = font.render(text, True, textColor)
 	text_rect = text.get_rect(right=rightX, centery=centerY)
@@ -142,7 +142,7 @@ def draw_text_top_left(screen, leftX, topY, textSize, text):
 	elif textSize == 70:
 		font = font70
 	else:
-		font = pygame.font.SysFont("jost700", textSize)
+		font = pygame.font.Font("fonts/Jost-700-Bold.otf", textSize)
 
 	text = font.render(text, True, textColor)
 	screen.blit(text, (leftX, topY))
@@ -175,7 +175,7 @@ def draw_left_with_superscript(screen, leftX, centerY, textSize, text):
 			elif textSize == 70:
 				font = font70
 			else:
-				font = pygame.font.SysFont("jost700", textSize)
+				font = pygame.font.Font("fonts/Jost-700-Bold.otf", textSize)
 
 			text = font.render(cleaned_text[n], True, textColor)
 			text_rect = text.get_rect(left=lastRightCoordinate, centery=centerY)
@@ -210,7 +210,7 @@ def draw_left_with_subscript(screen, leftX, centerY, textSize, text):
 			elif textSize == 70:
 				font = font70
 			else:
-				font = pygame.font.SysFont("jost700", textSize)
+				font = pygame.font.Font("fonts/Jost-700-Bold.otf", textSize)
 
 			text = font.render(cleaned_text[n], True, textColor)
 			text_rect = text.get_rect(left=lastRightCoordinate, centery=centerY)

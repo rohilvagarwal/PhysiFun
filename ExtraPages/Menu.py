@@ -1,5 +1,5 @@
 from ProjectConstants import *
-from Button import Button
+from UIElements.Button import Button
 
 
 def menu_button(centerX, centerY, text):
