@@ -10,3 +10,4 @@ def draw_about_me(screen):
 	draw_text_center(screen, SCREEN_WIDTH / 2, rojWidth + 70, 20, "By Rohil Agarwal")
 	draw_text_center(screen, SCREEN_WIDTH / 2, rojWidth + 100, 20, "I go by roj.")
 	draw_text_center(screen, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, 20, "Github: https://github.com/rohilvagarwal")
+	draw_text_center(screen, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 25, 20, "LinkedIn: https://www.linkedin.com/in/rohil-ag/")
