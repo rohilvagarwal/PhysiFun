@@ -1,5 +1,7 @@
 from ProjectConstants import *
 import math
+from Button import Button
+from SliderBar import SliderBar
 
 
 class CircularMotion:
@@ -19,6 +21,41 @@ class CircularMotion:
 		self.horizontalVelocity = None
 		self.verticalVelocity = None
 		self.playBackSpeed = 1
+
+		#general buttons
+		self.defaultButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10,
+									text="Default")
+		self.pauseButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10,
+								  text="Pause")
+		self.resumeButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10,
+								   text="Resume")
+		self.resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10,
+								  text="Reset")
+
+		#interactive elements
+		self.minRotationalVelocity = -4 * math.pi
+		self.maxRotationalVelocity = 4 * math.pi
+		self.rotationalVelocityBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, self.minRotationalVelocity, self.maxRotationalVelocity, math.pi,
+											   "Rotational Vel. (rad/s)", 2)
+		minTangentialVelocity = -4 * math.pi * 20
+		self.maxTangentialVelocity = 4 * math.pi * 20
+		self.tangentialVelocityBar = SliderBar(290, SCREEN_HEIGHT - 50, 200, 20, minTangentialVelocity, self.maxTangentialVelocity, math.pi * 10,
+											   "Tangential Vel. (m/s)", 2)
+		self.radiusBar = SliderBar(555, SCREEN_HEIGHT - 50, 200, 20, 5, 20, 10, "Radius (m)", 1)
+
+		self.tangentialVelocityBar.set_lowerBoundValue(self.minRotationalVelocity * self.get_radius())
+		self.tangentialVelocityBar.set_upperBoundValue(self.maxRotationalVelocity * self.get_radius())
+
+		self.minusPi = Button(centerX=35, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="-π")
+		self.minusPiOverTwo = Button(centerX=80, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=10, borderSize=10, text="-π/2")
+		self.zeroPi = Button(centerX=125, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="0")
+		self.plusPiOverTwo = Button(centerX=170, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=10, borderSize=10, text="+π/2")
+		self.plusPi = Button(centerX=215, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="+π")
+
+		self.oneXSpeed = Button(centerX=460, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="1x")
+		self.halfXSpeed = Button(centerX=510, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=12, borderSize=10, text="0.5x")
+		self.fourthXSpeed = Button(centerX=560, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=10, borderSize=10, text="0.25x")
+		self.tenthXSpeed = Button(centerX=610, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=12, borderSize=10, text="0.1x")
 
 	def set_playBackSpeed(self, playBackSpeed):
 		self.playBackSpeed = playBackSpeed
@@ -66,7 +103,107 @@ class CircularMotion:
 		self.angle += (self.rotationalVelocity * 180 / math.pi) * self.playBackSpeed / FPS
 		self.angle = self.angle % 360
 
-	def draw_static(self, screen, scale, maxTangentialVelocity):
+	def draw_static(self, screen, scale):
+		#interactive elements
+		draw_text_center(screen, 355, SCREEN_HEIGHT - 110, 20, "Playback Speed:")
+		if self.oneXSpeed.draw_and_check_click(screen):
+			self.set_playBackSpeed(1)
+		if self.halfXSpeed.draw_and_check_click(screen):
+			self.set_playBackSpeed(0.5)
+		if self.fourthXSpeed.draw_and_check_click(screen):
+			self.set_playBackSpeed(0.25)
+		if self.tenthXSpeed.draw_and_check_click(screen):
+			self.set_playBackSpeed(0.1)
+
+		if self.defaultButton.draw_and_check_click(screen):
+			self.rotationalVelocityBar.set_value(math.pi)
+			self.tangentialVelocityBar.set_value(math.pi * 10)
+			self.radiusBar.set_value(10)
+			self.set_angle(0)
+			self.set_playBackSpeed(1)
+
+			self.set_radius(10)
+			self.set_rotationalVelocity(math.pi)
+			self.set_tangentialVelocity(math.pi * 10)
+
+		if self.minusPi.draw_and_check_click(screen):
+			if self.get_rotationalVelocity() - math.pi < self.minRotationalVelocity:
+				self.rotationalVelocityBar.set_value(self.minRotationalVelocity)
+				self.set_rotationalVelocity(self.minRotationalVelocity)
+				self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+			else:
+				self.rotationalVelocityBar.set_value(self.get_rotationalVelocity() - math.pi)
+				self.set_rotationalVelocity(self.get_rotationalVelocity() - math.pi)
+				self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+
+		if self.minusPiOverTwo.draw_and_check_click(screen):
+			if self.get_rotationalVelocity() - math.pi / 2 < self.minRotationalVelocity:
+				self.rotationalVelocityBar.set_value(self.minRotationalVelocity)
+				self.set_rotationalVelocity(self.minRotationalVelocity)
+				self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+			else:
+				self.rotationalVelocityBar.set_value(self.get_rotationalVelocity() - math.pi / 2)
+				self.set_rotationalVelocity(self.get_rotationalVelocity() - math.pi / 2)
+				self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+
+		if self.zeroPi.draw_and_check_click(screen):
+			self.rotationalVelocityBar.set_value(0)
+			self.set_rotationalVelocity(0)
+			self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+
+		if self.plusPiOverTwo.draw_and_check_click(screen):
+			if self.get_rotationalVelocity() + math.pi / 2 > self.maxRotationalVelocity:
+				self.rotationalVelocityBar.set_value(self.maxRotationalVelocity)
+				self.set_rotationalVelocity(self.maxRotationalVelocity)
+				self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+			else:
+				self.rotationalVelocityBar.set_value(self.get_rotationalVelocity() + math.pi / 2)
+				self.set_rotationalVelocity(self.get_rotationalVelocity() + math.pi / 2)
+				self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+
+		if self.plusPi.draw_and_check_click(screen):
+			if self.get_rotationalVelocity() + math.pi > self.maxRotationalVelocity:
+				self.rotationalVelocityBar.set_value(self.maxRotationalVelocity)
+				self.set_rotationalVelocity(self.maxRotationalVelocity)
+				self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+			else:
+				self.rotationalVelocityBar.set_value(self.get_rotationalVelocity() + math.pi)
+				self.set_rotationalVelocity(self.get_rotationalVelocity() + math.pi)
+				self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+
+		self.rotationalVelocityBar.draw(screen)
+		self.tangentialVelocityBar.draw(screen)
+		self.radiusBar.draw(screen)
+
+		#if not self.get_rotationalVelocity() == self.rotationalVelocityBar.get_value():
+		if self.rotationalVelocityBar.get_handleSelected():
+			self.set_rotationalVelocity(self.rotationalVelocityBar.get_value())
+			self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+
+		#if not self.get_tangentialVelocity() == self.tangentialVelocityBar.get_value():
+		if self.tangentialVelocityBar.get_handleSelected():
+			self.set_tangentialVelocity(self.tangentialVelocityBar.get_value())
+			self.rotationalVelocityBar.set_value(self.get_rotationalVelocity())
+
+		#if not self.get_radius() == self.radiusBar.get_value():
+		if self.radiusBar.get_handleSelected():
+			self.set_radius(self.radiusBar.get_value())
+			self.set_rotationalVelocity(self.rotationalVelocityBar.get_value())
+			self.tangentialVelocityBar.set_value(self.get_tangentialVelocity())
+
+			self.tangentialVelocityBar.set_lowerBoundValue(self.minRotationalVelocity * self.get_radius())
+			self.tangentialVelocityBar.set_upperBoundValue(self.maxRotationalVelocity * self.get_radius())
+
+		if self.get_state() == "animating":
+			self.next_frame()
+
+			if self.pauseButton.draw_and_check_click(screen):
+				self.set_state("paused")
+
+		elif self.get_state() == "paused":
+			if self.resumeButton.draw_and_check_click(screen):
+				self.set_state("animating")
+
 		#Scale bar
 		#draw scale bar (1 pixel is scale meters)
 		pygame.draw.rect(screen, objectsColor, (SCREEN_WIDTH - 25 - 100 - 4, 75 + 20 - 2, 100, 4))  #bar
@@ -114,8 +251,8 @@ class CircularMotion:
 
 		pygame.draw.circle(screen, objectsColor, (SCREEN_WIDTH - self.pivotX, self.pivotY), CircularMotion.pivotRadius)
 
-		horizontalVelocityArrowLength = self.horizontalVelocity / maxTangentialVelocity * 200
-		verticalVelocityArrowLength = self.verticalVelocity / maxTangentialVelocity * 200
+		horizontalVelocityArrowLength = self.horizontalVelocity / self.maxTangentialVelocity * 200
+		verticalVelocityArrowLength = self.verticalVelocity / self.maxTangentialVelocity * 200
 
 		if horizontalVelocityArrowLength > 0:
 			pygame.draw.rect(screen, objectsColor,

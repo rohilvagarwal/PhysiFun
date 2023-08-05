@@ -5,7 +5,7 @@ pygame.init()
 #Project Constants
 #game window
 SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 700
+SCREEN_HEIGHT = SCREEN_WIDTH * 0.7
 
 #game variables
 clock = pygame.time.Clock()

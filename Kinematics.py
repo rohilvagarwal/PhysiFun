@@ -1,5 +1,7 @@
 from ProjectConstants import *
 import math
+from Button import Button
+from SliderBar import SliderBar
 
 
 class Kinematics:
@@ -20,6 +22,26 @@ class Kinematics:
 		self.arrowWidth = 0
 		self.playBackSpeed = 1
 		self.currentTime = 0.000
+
+		#general buttons
+		self.defaultButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10,
+									text="Default")
+		self.pauseButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10,
+								  text="Pause")
+		self.resumeButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10,
+								   text="Resume")
+		self.resetButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 95, width=200, height=50, textSize=30, borderSize=10,
+								  text="Reset")
+
+		#interactive elements
+		self.angleBar = SliderBar(25, SCREEN_HEIGHT - 50, 200, 20, -90, 90, 0, "Angle (°)")
+		self.heightBar = SliderBar(250, SCREEN_HEIGHT - 50, 200, 20, 0, 500, 250, "Height (m)")
+		self.velocityBar = SliderBar(475, SCREEN_HEIGHT - 50, 200, 20, 0, 100, 50, "Initial Velocity (m/s)")
+		self.launchButton = Button(centerX=SCREEN_WIDTH - 125, centerY=SCREEN_HEIGHT - 40, width=200, height=50, textSize=30, borderSize=10,
+								   text="Launch")
+		self.oneXSpeed = Button(centerX=210, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="1x")
+		self.three = Button(centerX=260, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="3x")
+		self.fiveXSpeed = Button(centerX=310, centerY=SCREEN_HEIGHT - 110, width=40, height=40, textSize=20, borderSize=10, text="5x")
 
 	def set_state(self, state):
 		self.state = state
@@ -109,6 +131,70 @@ class Kinematics:
 			self.currentCenterY = self.calculate_total_vertical_distance()
 
 	def draw_static(self, screen):
+		#interactive elements
+		draw_text_center(screen, 100, SCREEN_HEIGHT - 110, 20, "Playback Speed:")
+		if self.oneXSpeed.draw_and_check_click(screen):
+			self.set_playbackSpeed(1)
+		if self.three.draw_and_check_click(screen):
+			self.set_playbackSpeed(3)
+		if self.fiveXSpeed.draw_and_check_click(screen):
+			self.set_playbackSpeed(5)
+
+		if self.get_state() == "default":
+			if self.defaultButton.draw_and_check_click(screen):
+				self.angleBar.set_value(0)
+				self.heightBar.set_value(250)
+				self.velocityBar.set_value(50)
+
+			self.angleBar.draw(screen)
+			self.heightBar.draw(screen)
+			self.velocityBar.draw(screen)
+
+			self.set_angle(self.angleBar.get_value())
+			self.set_pos(self.originalCenterX, Kinematics.groundHeight - Kinematics.massRadius - self.heightBar.get_value())
+			self.set_initial_velocity(self.velocityBar.get_value())
+
+			if self.launchButton.draw_and_check_click(screen):
+				self.set_state("animating")
+
+		elif self.get_state() == "animating":
+			self.angleBar.draw_static(screen)
+			self.heightBar.draw_static(screen)
+			self.velocityBar.draw_static(screen)
+
+			if self.pauseButton.draw_and_check_click(screen):
+				self.set_state("paused")
+
+			if self.resetButton.draw_and_check_click(screen):
+				self.set_state("default")
+				self.set_pos(self.originalCenterX, self.originalCenterY)
+
+			#kinematicsMass.set_playbackSpeed(5)
+			self.next_launch_frame()
+
+		elif self.get_state() == "paused":
+			self.angleBar.draw_static(screen)
+			self.heightBar.draw_static(screen)
+			self.velocityBar.draw_static(screen)
+
+			if self.resumeButton.draw_and_check_click(screen):
+				self.set_state("animating")
+
+			if self.resetButton.draw_and_check_click(screen):
+				self.set_state("default")
+				self.set_pos(self.originalCenterX, self.originalCenterY)
+
+		elif self.get_state() == "doneAnimating":
+			self.angleBar.draw_static(screen)
+			self.heightBar.draw_static(screen)
+			self.velocityBar.draw_static(screen)
+
+			#kinematicsMass.after_animation(screen)
+
+			if self.resetButton.draw_and_check_click(screen):
+				self.set_state("default")
+				self.set_pos(self.originalCenterX, self.originalCenterY)
+
 		#ground
 		pygame.draw.rect(screen, objectsColor, (0, Kinematics.groundHeight, SCREEN_WIDTH, 10))
 
@@ -154,7 +240,7 @@ class Kinematics:
 		if self.state == "doneAnimating":
 			draw_text_right(screen, SCREEN_WIDTH - 130, 140, 20, "Speed:")
 			draw_text_left(screen, SCREEN_WIDTH - 120, 140, 20, str(self.playBackSpeed) + "x")
-			
+
 			draw_text_right(screen, SCREEN_WIDTH - 130, 170, 20, "Time:")
 			draw_text_left(screen, SCREEN_WIDTH - 120, 170, 20, str("{:.3f}".format(self.calculate_time_till_ground())) + " s")
 
