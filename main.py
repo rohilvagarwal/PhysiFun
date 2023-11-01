@@ -3,9 +3,6 @@ import pygame
 
 from ProjectConstants import *
 
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Main Menu")
-
 import sys
 from ExtraPages.Menu import draw_menu
 from ExtraPages.LearnMore import draw_about_me
@@ -22,7 +19,6 @@ def update_game_state(new_state):
 
 def all_pages():
 	screen.fill(backgroundColor)
-	screen.blit(scaled_d4, (0, 10))  #draw d4
 
 	global gameState
 
@@ -36,10 +32,6 @@ def all_pages():
 
 #game states: menu, kinematics, circularMotion, aboutMe
 gameState = "menu"
-
-#image imports
-d4 = pygame.image.load('images/d4Logo.svg').convert_alpha()
-scaled_d4 = pygame.transform.scale(d4, (50, 50)).convert_alpha()
 
 #objects
 kinematicsObj = Kinematics(100, 500, 50, 0)

@@ -1,7 +1,7 @@
 from ProjectConstants import *
 
 rojWidth = 300
-roj = pygame.image.load('images/roj.png').convert_alpha()
+roj = pygame.image.load('images/Rohil.png').convert_alpha()
 scaledRoj = pygame.transform.scale(roj, (rojWidth, rojWidth)).convert_alpha()
 
 

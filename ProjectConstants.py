@@ -7,6 +7,9 @@ pygame.init()
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = SCREEN_WIDTH * 0.7
 
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Main Menu")
+
 #game variables
 clock = pygame.time.Clock()
 FPS = 60
@@ -23,6 +26,10 @@ hoverColor = LIGHT_GREY
 sliderBarColor = BLACK
 sliderBarHandleColor = RED
 objectsColor = BLACK
+
+#Game Logo
+logo = pygame.image.load('images/PhysiFun Logo 800x600.svg').convert_alpha()
+scaled_logo = pygame.transform.scale(logo, (600, 450)).convert_alpha()
 
 #physical constants
 GRAVITY = 9.8
