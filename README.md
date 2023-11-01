@@ -5,6 +5,8 @@ concepts in Physics I. The app provides real-time simulations that allow you to 
 observe their behavior as if you were conducting real experiments. Whether you're a student, educator, or just someone
 curious about physics, this app is your gateway to learn more in an interesting way!
 
+Try it on the web: https://rohilvagarwal.github.io/PhysiFun/
+
 ## Features
 
 Currently, PhysiFun offers the following modules:
