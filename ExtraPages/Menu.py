@@ -1,5 +1,8 @@
 from ProjectConstants import *
 from UIElements.Button import Button
+from MenuFun import MenuFun
+
+launch = MenuFun(SCREEN_WIDTH * 3 / 4, SCREEN_HEIGHT * 2 / 3, 400)
 
 
 def menu_button(centerX, centerY, text):
@@ -25,3 +28,5 @@ def draw_menu(screen, update_game_state):
 
 	if learnMore.draw_and_check_click(screen):
 		update_game_state("learnMore")
+
+	launch.draw_static(screen)

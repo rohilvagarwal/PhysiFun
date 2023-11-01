@@ -1,4 +1,5 @@
 import pygame
+import math
 
 pygame.init()
 
@@ -231,3 +232,21 @@ def draw_left_with_subscript(screen, leftX, centerY, textSize, text):
 			screen.blit(text, text_rect)
 
 			lastRightCoordinate = text_rect.right
+
+
+def degrees_to_mouse(centerX, centerY):
+	# Get the mouse position
+	mouse_x, mouse_y = pygame.mouse.get_pos()
+
+	# Calculate the angle between the arrow and the mouse position
+	dx = mouse_x - centerX
+	dy = mouse_y - centerY
+	return math.degrees(math.atan2(-dy, dx))
+
+def blit_center(screen, image, coordinates):
+	image_rect = image.get_rect()
+
+	blit_x = coordinates[0] - (image_rect.width // 2)
+	blit_y = coordinates[1] - (image_rect.height // 2)
+
+	screen.blit(image, (blit_x, blit_y))
