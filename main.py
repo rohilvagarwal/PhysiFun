@@ -5,7 +5,7 @@ from ProjectConstants import *
 
 import sys
 from ExtraPages.Menu import draw_menu
-from ExtraPages.LearnMore import draw_about_me
+from ExtraPages.LearnMore import draw_learn_more
 from UIElements.Button import Button
 from PhysicsModules.Kinematics import Kinematics
 from PhysicsModules.CircularMotion import CircularMotion
@@ -30,7 +30,7 @@ def all_pages():
 			gameState = "menu"
 
 
-#game states: menu, kinematics, circularMotion, aboutMe
+#game states: menu, kinematics, circularMotion, learnMore
 gameState = "menu"
 
 #objects
@@ -56,13 +56,17 @@ async def main():
 		all_pages()
 
 		if gameState == "menu":
+			pygame.display.set_caption("Main Menu")
 			draw_menu(screen, update_game_state)
 		if gameState == "kinematics":
+			pygame.display.set_caption("Kinematics")
 			kinematicsObj.draw_static(screen)
 		if gameState == "circularMotion":
+			pygame.display.set_caption("Circular Motion")
 			circularMotionObj.draw_static(screen, 0.1)  #1 pixel is 0.1m
-		if gameState == "aboutMe":
-			draw_about_me(screen)
+		if gameState == "learnMore":
+			pygame.display.set_caption("Learn More")
+			draw_learn_more(screen)
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:

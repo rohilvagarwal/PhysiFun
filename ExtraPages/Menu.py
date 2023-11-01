@@ -14,7 +14,7 @@ def draw_menu(screen, update_game_state):
 
 	kinematics = menu_button(200, 3 * SCREEN_HEIGHT / 6, "Kinematics")
 	circularMotion = menu_button(200, 4 * SCREEN_HEIGHT / 6, "Circular Motion")
-	aboutMe = menu_button(200, 5 * SCREEN_HEIGHT / 6, "Learn More")
+	learnMore = menu_button(200, 5 * SCREEN_HEIGHT / 6, "Learn More")
 
 	#draw button and check if clicked
 	if kinematics.draw_and_check_click(screen):
@@ -23,5 +23,5 @@ def draw_menu(screen, update_game_state):
 	if circularMotion.draw_and_check_click(screen):
 		update_game_state("circularMotion")
 
-	if aboutMe.draw_and_check_click(screen):
-		update_game_state("aboutMe")
+	if learnMore.draw_and_check_click(screen):
+		update_game_state("learnMore")
