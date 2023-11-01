@@ -8,7 +8,7 @@ pygame.display.set_caption("Main Menu")
 
 import sys
 from ExtraPages.Menu import draw_menu
-from ExtraPages.AboutMe import draw_about_me
+from ExtraPages.LearnMore import draw_about_me
 from UIElements.Button import Button
 from PhysicsModules.Kinematics import Kinematics
 from PhysicsModules.CircularMotion import CircularMotion
